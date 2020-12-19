@@ -1,12 +1,13 @@
 # CLEANING FROM https://towardsdatascience.com/basic-tweet-preprocessing-in-python-efd8360d529e
 # AND https://www.kaggle.com/ragnisah/text-data-cleaning-tweets-analysis
 
+# TODO NB !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+# TODO decide if keeping hashtags in the text -> YES IT HAS TO BE TAKEN !! -> change code to keep hashtags
+
 # TODO output -> covid19_tweets_cleaned_2.csv -> with list-strings as cleaned text
 # TODO output -> covid19_tweets_cleaned_string.csv -> with strings as cleaned text
 
 # TODO this second cleaning file (cleaning_1.py) seems better then cleaning.py
-
-# TODO decide if keeping hashtags in the text
 
 # TODO choose if we want to add also stemming (probably better avoid lemmatization)
 
