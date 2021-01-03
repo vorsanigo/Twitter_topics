@@ -163,6 +163,8 @@ df['text_cleaned_tuple'] = df['tweet_preprocessed'].apply(lambda x: clean_text_t
 # df.to_csv(r'/home/veror/PycharmProjects/DataMiningProj_OK/DATASET_covid19_tweets_cleaned.csv', index=False)
 # DATASET WITH HASHTAGS
 df.to_csv(r'/home/veror/PycharmProjects/DataMiningProj_OK/DATASET_covid19_tweets_cleaned_YEShashtags.csv', index=False)
+# TODO do we need to keep also # and not to cut the words in hashtags?? Or can we consider them as normal terms?
+# # TODO if they are special we can take them from the column df['hashtags'] (line 38)
 
 # preprocess -> step 2
 #
