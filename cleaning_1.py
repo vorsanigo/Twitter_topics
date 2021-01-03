@@ -2,15 +2,13 @@
 # AND https://www.kaggle.com/ragnisah/text-data-cleaning-tweets-analysis
 
 # TODO NB !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-# TODO decide if keeping hashtags in the text -> YES IT HAS TO BE TAKEN !! -> change code to keep hashtags
 
-# TODO output -> covid19_tweets_cleaned_2.csv -> with list-strings as cleaned text
-# TODO output -> covid19_tweets_cleaned_string.csv -> with strings as cleaned text
+# TODO output -> DATASET_covid19_tweets_cleaned_NOhashtags.csv -> with list, string, tuples cleaned text and NO hashtags (in a separated column)
+# TODO output -> DATASET_covid19_tweets_cleaned_NOhashtags.csv -> with list, string, tuples cleaned text and YES hashtags
 
 # TODO this second cleaning file (cleaning_1.py) seems better then cleaning.py
 
-# TODO choose if we want to add also stemming (probably better avoid lemmatization)
-
+# TODO choose if we want stemming (probably better avoid lemmatization), now we used stemming in this code
 # STEMMING: Working -> Work ___ it eliminates affixes from a word (stemming is faster)
 # LEMMATIZATION: Better -> Good ___ it uses vocabulary and morphological analysis of words to detect the lemma of the word (basic form)
 
@@ -30,13 +28,14 @@ nltk.download('stopwords')
 from nltk.tokenize import TweetTokenizer
 import pickle
 
-df = pd.read_csv("/home/veror/PycharmProjects/DataMiningProject/COPY_covid19_tweets .csv")
+df = pd.read_csv("/home/veror/PycharmProjects/DataMiningProj_OK/DATASET_covid19_tweets.csv")
 # keep only columns "date" and "text"
 df.drop(['user_name', 'user_location', 'user_description', 'user_created', 'user_followers', 'user_friends',
          'user_favourites', 'user_verified', 'hashtags', 'source', 'is_retweet'], axis=1, inplace=True)
 
 # list of hashtags added to a new column -> don't know if it is useful
-df['hashtags'] = df['text'].apply(lambda x: re.findall(r"#(\w+)", x))
+# DECOMMENT/COMMENT THIS LINE TO REMOVE/KEEP HASHTAGS
+#df['hashtags'] = df['text'].apply(lambda x: re.findall(r"#(\w+)", x))
 
 #segmenter using the word statistics from Twitter
 seg_tw = Segmenter(corpus="twitter")
@@ -52,6 +51,7 @@ seg_tw = Segmenter(corpus="twitter")
 # CLEANING
 # preprocess tweets
 # tweet-preprocessor package deals with URLs, mentions, reserved words, emojis, smileys
+p.set_options(p.OPT.URL, p.OPT.MENTION, p.OPT.RESERVED, p.OPT.EMOJI, p.OPT.SMILEY, p.OPT.NUMBER) # keep hashtags
 df['tweet_preprocessed'] = df['text'].apply(lambda x: p.clean(x))
 
 
@@ -110,8 +110,8 @@ def clean_text(text):
     text_rc = re.sub('[0-9]+', '', text_lc)
     tokens = re.split('\W+', text_rc)    # tokenization
     # TODO uncomment this line to add setemming
-    #text = [ps.stem(word) for word in tokens if word not in stopword]  # remove stopwords and stemming
-    text = [word for word in tokens if word not in stopword]  # remove stopwords and stemming
+    text = [ps.stem(word) for word in tokens if word not in stopword]  # remove stopwords and stemming
+    #text = [word for word in tokens if word not in stopword]  # remove stopwords and stemming
     return text
 
 # Everything put together in a string
@@ -122,9 +122,12 @@ def clean_text_string(text):
     # TODO uncomment this line to add setemming
     #text = [ps.stem(word) for word in tokens if word not in stopword]  # remove stopwords and stemming
     text = ""
+    #for word in tokens:
+    #    if word not in stopword:
+    #        text = text + " " + word  # remove stopwords NO stemming
     for word in tokens:
         if word not in stopword:
-            text = text + " " + word  # remove stopwords and stemming
+            text = text + " " + ps.stem(word) # remove stopwords and stemming
     return text
 
 # Everything put together for apriori algorithm
@@ -132,9 +135,9 @@ def clean_text_tuple(text):
     text_lc = "".join([word.lower() for word in text if word not in string.punctuation]) # remove puntuation
     text_rc = re.sub('[0-9]+', '', text_lc)
     tokens = re.split('\W+', text_rc)    # tokenization
-    # TODO uncomment this line to add setemming
-    #text = [ps.stem(word) for word in tokens if word not in stopword]  # remove stopwords and stemming
-    text = [word for word in tokens if word not in stopword]  # remove stopwords and stemming
+    # TODO uncomment this line to add stemming
+    text = [ps.stem(word) for word in tokens if word not in stopword]  # remove stopwords and stemming
+    #text = [word for word in tokens if word not in stopword]  # remove stopwords not stemming
     text_tuple = tuple(text)
     return text_tuple
 
@@ -153,8 +156,13 @@ file.close()'''
 # transform clened dataset into a csv file -> "covid19_tweets_cleaned.csv"
 # df.to_csv(r'/home/veror/PycharmProjects/DataMiningProject/covid19_tweets_cleaned_3.csv', index=False)
 
-df['text_cleaned'] = df['tweet_preprocessed'].apply(lambda x: clean_text_string(x))
-df.to_csv(r'/home/veror/PycharmProjects/DataMiningProject/covid19_tweets_cleaned_string.csv', index=False)
+df['text_cleaned_list'] = df['tweet_preprocessed'].apply(lambda x: clean_text(x))
+df['text_cleaned_string'] = df['tweet_preprocessed'].apply(lambda x: clean_text_string(x))
+df['text_cleaned_tuple'] = df['tweet_preprocessed'].apply(lambda x: clean_text_tuple(x))
+# DATATSET WITH REMOVED HASHTAGS
+# df.to_csv(r'/home/veror/PycharmProjects/DataMiningProj_OK/DATASET_covid19_tweets_cleaned.csv', index=False)
+# DATASET WITH HASHTAGS
+df.to_csv(r'/home/veror/PycharmProjects/DataMiningProj_OK/DATASET_covid19_tweets_cleaned_YEShashtags.csv', index=False)
 
 # preprocess -> step 2
 #
