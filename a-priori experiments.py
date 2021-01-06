@@ -20,9 +20,12 @@ from mlxtend.frequent_patterns import fpgrowth
 from mlxtend.frequent_patterns import association_rules
 from mlxtend.preprocessing import TransactionEncoder
 
-te = TransactionEncoder()
-
 df = pd.read_csv("/home/veror/PycharmProjects/DataMiningProj_OK/DATASET_covid19_tweets_cleaned_YEShashtags.csv")
+
+
+# TODO MLXTEND APRIORI
+
+te = TransactionEncoder()
 
 '''stringA = "['come', 'newstalkbreakfast', 'kick', 'run', 'top', 'stori']"
 res = stringA.strip('][').split(', ')
@@ -34,18 +37,18 @@ print("eeeeeeeeeeeeeeeeeeeeeee")
 print(li)
 '''
 
-dataset_list_file = open('pickle_INPUT', 'rb')
+'''dataset_list_file = open('pickle_INPUT_list_of_list', 'rb')
 dataset_list = pickle.load(dataset_list_file)
-print(dataset_list)
+print(dataset_list)'''
 
 
-te_ary = te.fit(dataset_list).transform(dataset_list)
+'''te_ary = te.fit(dataset_list).transform(dataset_list)
 df1 = pd.DataFrame(te_ary, columns=te.columns_)
 print("-------------")
 print(df1)
 
 res = fpgrowth(df1, min_support=0.1, use_colnames=True)
-print(res)
+print(res)'''
 
 '''def get_list(str):
   li = list(str.split(" "))
@@ -59,29 +62,23 @@ for (idx, row) in df.iterrows():
     print(row.loc['text_cleaned_string'])
     row.loc['text_cleaned_string'].split(" ")
     #big_list.append(get_list(row.loc['text_cleaned_string']))
-print(big_list)'''
-
-
-
-print(df['text_cleaned_string'])
-print(df['text_cleaned_list'])
-print(df['text_cleaned_list'][1][0])
-x = list(df['text_cleaned_list'][1])
-print(x)
-s = "ciao come ti chiami"
-print(list(s))
+print(big_list)
 
 transactions = [['eggs', 'bacon', 'soup'],
                 ['eggs', 'bacon', 'apple', 'pen', 'soup'],
                 ['soup', 'bacon', 'banana', 'cucumber', 'vodka', 'soup']]
 
-'''te_ary = te.fit(transactions).transform(transactions)
+te_ary = te.fit(transactions).transform(transactions)
 df1 = pd.DataFrame(te_ary, columns=te.columns_)
 print("-------------")
 print(df1)
 
 res = fpgrowth(df1, min_support=0.6, use_colnames=True)
 print(res)'''
+
+# TODO END MLXTEND APRIORI
+
+
 
 
 '''def data_generator(filename):
@@ -154,6 +151,10 @@ for (idx, row) in df.iterrows():
 print("AAA", big_list)'''
 
 
+
+
+# TODO EFFICIENT APRIORI
+
 # Original data
 '''transactions = [('eggs', 'bacon', 'soup'),
                 ('eggs', 'bacon', 'apple', 'pen', 'soup'),
@@ -191,19 +192,51 @@ print(tuple(y))'''
 
 
 # EXPERIMENT APRIORI ON CLEANED DATA
+
+file_eff_apriori = open('pickle_INPUT_list_of_tuple', 'rb')
+input_eff_apriori = pickle.load(file_eff_apriori)
+#print(input_eff_apriori)
+
 #associations = apriori(observations, min_length = 2, min_support = 0.2, min_confidence = 0.2, min_lift = 3)
 # first -> identify rules
-'''itemsets, rules = apriori(apriori_input, min_support=0.001, min_confidence=0.5)
+itemsets, rules = apriori(input_eff_apriori, min_support=0.01, min_confidence=0.5)
 
 rules_rhs = filter(lambda rule: len(rule.lhs) == 2 and len(rule.rhs) == 1, rules)
 for rule in sorted(rules_rhs, key=lambda rule: rule.lift):
   print(rule)  # Prints the rule and its confidence, support, lift, ...
+print(itemsets)
 
-print('------------------------------------------------------------------------')'''
+print('------------------------------------------------------------------------')
 
-'''# second -> identify frequent itemsets
-itemsets, rules = apriori(apriori_input, output_transaction_ids=True)
+# second -> identify frequent itemsets
+itemsets, rules = apriori(input_eff_apriori, output_transaction_ids=True)
+print(itemsets)
+# {1: {('bacon',): ItemsetCount(itemset_count=3, members={0, 1, 2}), ...
+
+
+
+
+
+
+
+'''transactions = [('eggs', 'bacon', 'soup'),
+                ('eggs', 'bacon', 'apple', 'pen', 'soup'),
+                ('soup', 'bacon', 'banana', 'cucumber', 'vodka', 'soup')]
+
+#associations = apriori(observations, min_length = 2, min_support = 0.2, min_confidence = 0.2, min_lift = 3)
+# first -> identify rules
+itemsets, rules = apriori(transactions, min_support=0.3, min_confidence=0.5, output_transaction_ids=True)
+
+rules_rhs = filter(lambda rule: len(rule.lhs) == 2 and len(rule.rhs) == 1, rules)
+for rule in sorted(rules_rhs, key=lambda rule: rule.lift):
+  print(rule)  # Prints the rule and its confidence, support, lift, ...
+print(itemsets)
+
+print('------------------------------------------------------------------------')
+
+# second -> identify frequent itemsets
+itemsets, rules = apriori(transactions, output_transaction_ids=True)
+print(rules)
 print(itemsets)
 # {1: {('bacon',): ItemsetCount(itemset_count=3, members={0, 1, 2}), ...'''
-
-
+# TODO END EFFICIENT APRIORI
