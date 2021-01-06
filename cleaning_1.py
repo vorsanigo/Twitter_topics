@@ -110,9 +110,11 @@ def clean_text(text):
     text_rc = re.sub('[0-9]+', '', text_lc)
     tokens = re.split('\W+', text_rc)    # tokenization
     # TODO uncomment this line to add setemming
-    text = [ps.stem(word) for word in tokens if word not in stopword]  # remove stopwords and stemming
+    text = [ps.stem(word) for word in tokens if (word not in stopword and word != '')]  # remove stopwords and stemming
     #text = [word for word in tokens if word not in stopword]  # remove stopwords and stemming
     return text
+
+print(clean_text("   ciao amico come    va   "))
 
 # Everything put together in a string
 def clean_text_string(text):
@@ -126,7 +128,7 @@ def clean_text_string(text):
     #    if word not in stopword:
     #        text = text + " " + word  # remove stopwords NO stemming
     for word in tokens:
-        if word not in stopword:
+        if (word not in stopword and word != ''):
             text = text + " " + ps.stem(word) # remove stopwords and stemming
     return text
 
@@ -136,7 +138,7 @@ def clean_text_tuple(text):
     text_rc = re.sub('[0-9]+', '', text_lc)
     tokens = re.split('\W+', text_rc)    # tokenization
     # TODO uncomment this line to add stemming
-    text = [ps.stem(word) for word in tokens if word not in stopword]  # remove stopwords and stemming
+    text = [ps.stem(word) for word in tokens if (word not in stopword and word != '')]  # remove stopwords and stemming
     #text = [word for word in tokens if word not in stopword]  # remove stopwords not stemming
     text_tuple = tuple(text)
     return text_tuple
@@ -145,26 +147,32 @@ def clean_text_tuple(text):
 # df['text_cleaned'] = df['tweet_preprocessed'].apply(lambda x: clean_text(x))
 
 # create list of tuples for apriori algorithm of python
-'''big_list = []
+big_list = []
 for (idx, row) in df.iterrows():
-    big_list.append(clean_text_tuple(row.loc['tweet_preprocessed']))'''
+    big_list.append(clean_text(row.loc['tweet_preprocessed']))
+print(big_list)
 
 '''file = open('pickle_input_apriori', 'wb')
 pickle.dump(big_list, file)
 file.close()'''
 
+file = open('pickle_INPUT', 'wb')
+pickle.dump(big_list, file)
+file.close()
+
 # transform clened dataset into a csv file -> "covid19_tweets_cleaned.csv"
 # df.to_csv(r'/home/veror/PycharmProjects/DataMiningProject/covid19_tweets_cleaned_3.csv', index=False)
 
-df['text_cleaned_list'] = df['tweet_preprocessed'].apply(lambda x: clean_text(x))
-df['text_cleaned_string'] = df['tweet_preprocessed'].apply(lambda x: clean_text_string(x))
-df['text_cleaned_tuple'] = df['tweet_preprocessed'].apply(lambda x: clean_text_tuple(x))
+#df['text_cleaned_list'] = df['tweet_preprocessed'].apply(lambda x: clean_text(x))
+#df['text_cleaned_string'] = df['tweet_preprocessed'].apply(lambda x: clean_text_string(x))
+#df['text_cleaned_tuple'] = df['tweet_preprocessed'].apply(lambda x: clean_text_tuple(x))
 # DATATSET WITH REMOVED HASHTAGS
 # df.to_csv(r'/home/veror/PycharmProjects/DataMiningProj_OK/DATASET_covid19_tweets_cleaned.csv', index=False)
 # DATASET WITH HASHTAGS
-df.to_csv(r'/home/veror/PycharmProjects/DataMiningProj_OK/DATASET_covid19_tweets_cleaned_YEShashtags.csv', index=False)
+#df.to_csv(r'/home/veror/PycharmProjects/DataMiningProj_OK/DATASET_covid19_tweets_cleaned_YEShashtags_CORRECT.csv', index=False)
+
 # TODO do we need to keep also # and not to cut the words in hashtags?? Or can we consider them as normal terms?
-# # TODO if they are special we can take them from the column df['hashtags'] (line 38)
+# TODO if they are special we can take them from the column df['hashtags'] (line 38)
 
 # preprocess -> step 2
 #
