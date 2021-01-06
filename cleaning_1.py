@@ -146,19 +146,33 @@ def clean_text_tuple(text):
 # clean dataset
 # df['text_cleaned'] = df['tweet_preprocessed'].apply(lambda x: clean_text(x))
 
-# create list of tuples for apriori algorithm of python
-big_list = []
-for (idx, row) in df.iterrows():
-    big_list.append(clean_text(row.loc['tweet_preprocessed']))
-print(big_list)
-
 '''file = open('pickle_input_apriori', 'wb')
 pickle.dump(big_list, file)
 file.close()'''
 
+# LIST OF LISTS FOR APRIORI MLXTEND
+# create list of lists for apriori algorithm of python
+'''big_list = []
+for (idx, row) in df.iterrows():
+    big_list.append(clean_text(row.loc['tweet_preprocessed']))
+print(big_list)
+
 file = open('pickle_INPUT', 'wb')
 pickle.dump(big_list, file)
+file.close()'''
+
+# LIST OF TUPLES FOR APRIORI EFFICIENT_APRIORI
+# create list of tuples for apriori algorithm of python
+big_list = []
+for (idx, row) in df.iterrows():
+    big_list.append(clean_text_tuple(row.loc['tweet_preprocessed']))
+print(big_list)
+
+file = open('pickle_INPUT_list_of_tuple', 'wb')
+pickle.dump(big_list, file)
 file.close()
+
+
 
 # transform clened dataset into a csv file -> "covid19_tweets_cleaned.csv"
 # df.to_csv(r'/home/veror/PycharmProjects/DataMiningProject/covid19_tweets_cleaned_3.csv', index=False)
