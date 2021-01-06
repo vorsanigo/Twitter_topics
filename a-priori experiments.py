@@ -16,6 +16,73 @@ from nltk.tokenize import TweetTokenizer
 import pickle
 
 
+from mlxtend.frequent_patterns import fpgrowth
+from mlxtend.frequent_patterns import association_rules
+from mlxtend.preprocessing import TransactionEncoder
+
+te = TransactionEncoder()
+
+df = pd.read_csv("/home/veror/PycharmProjects/DataMiningProj_OK/DATASET_covid19_tweets_cleaned_YEShashtags.csv")
+
+'''stringA = "['come', 'newstalkbreakfast', 'kick', 'run', 'top', 'stori']"
+res = stringA.strip('][').split(', ')
+print(res)
+
+stringE = "come you hey friend eee"
+li = list(stringE.split(" "))
+print("eeeeeeeeeeeeeeeeeeeeeee")
+print(li)
+'''
+
+dataset_list_file = open('pickle_INPUT', 'rb')
+dataset_list = pickle.load(dataset_list_file)
+print(dataset_list)
+
+
+te_ary = te.fit(dataset_list).transform(dataset_list)
+df1 = pd.DataFrame(te_ary, columns=te.columns_)
+print("-------------")
+print(df1)
+
+res = fpgrowth(df1, min_support=0.1, use_colnames=True)
+print(res)
+
+'''def get_list(str):
+  li = list(str.split(" "))
+  return li
+
+print(get_list("   c d rrr"))
+
+big_list = []
+for (idx, row) in df.iterrows():
+    #print(type(row.loc['text_cleaned_string']))
+    print(row.loc['text_cleaned_string'])
+    row.loc['text_cleaned_string'].split(" ")
+    #big_list.append(get_list(row.loc['text_cleaned_string']))
+print(big_list)'''
+
+
+
+print(df['text_cleaned_string'])
+print(df['text_cleaned_list'])
+print(df['text_cleaned_list'][1][0])
+x = list(df['text_cleaned_list'][1])
+print(x)
+s = "ciao come ti chiami"
+print(list(s))
+
+transactions = [['eggs', 'bacon', 'soup'],
+                ['eggs', 'bacon', 'apple', 'pen', 'soup'],
+                ['soup', 'bacon', 'banana', 'cucumber', 'vodka', 'soup']]
+
+'''te_ary = te.fit(transactions).transform(transactions)
+df1 = pd.DataFrame(te_ary, columns=te.columns_)
+print("-------------")
+print(df1)
+
+res = fpgrowth(df1, min_support=0.6, use_colnames=True)
+print(res)'''
+
 
 '''def data_generator(filename):
   """
@@ -35,8 +102,8 @@ itemsets, rules = apriori(transactions, min_support=0.9, min_confidence=0.6)'''
 
 
 
-apriori_input_file = open('pickle_input_apriori', 'rb')
-apriori_input = pickle.load(apriori_input_file)
+#apriori_input_file = open('pickle_input_apriori', 'rb')
+#apriori_input = pickle.load(apriori_input_file)
 #print('labels_lookup_CURRENCY560', apriori_input)
 
 # for experiments
@@ -126,13 +193,13 @@ print(tuple(y))'''
 # EXPERIMENT APRIORI ON CLEANED DATA
 #associations = apriori(observations, min_length = 2, min_support = 0.2, min_confidence = 0.2, min_lift = 3)
 # first -> identify rules
-itemsets, rules = apriori(apriori_input, min_support=0.001, min_confidence=0.5)
+'''itemsets, rules = apriori(apriori_input, min_support=0.001, min_confidence=0.5)
 
 rules_rhs = filter(lambda rule: len(rule.lhs) == 2 and len(rule.rhs) == 1, rules)
 for rule in sorted(rules_rhs, key=lambda rule: rule.lift):
   print(rule)  # Prints the rule and its confidence, support, lift, ...
 
-print('------------------------------------------------------------------------')
+print('------------------------------------------------------------------------')'''
 
 '''# second -> identify frequent itemsets
 itemsets, rules = apriori(apriori_input, output_transaction_ids=True)
