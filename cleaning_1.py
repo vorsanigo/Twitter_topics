@@ -27,15 +27,12 @@ nltk.download('wordnet')
 nltk.download('stopwords')
 from nltk.tokenize import TweetTokenizer
 import pickle
+from datetime import datetime
 
 df = pd.read_csv("/home/veror/PycharmProjects/DataMiningProj_OK/DATASET_covid19_tweets.csv")
 # keep only columns "date" and "text"
 df.drop(['user_name', 'user_location', 'user_description', 'user_created', 'user_followers', 'user_friends',
          'user_favourites', 'user_verified', 'hashtags', 'source', 'is_retweet'], axis=1, inplace=True)
-
-# list of hashtags added to a new column -> don't know if it is useful
-# DECOMMENT/COMMENT THIS LINE TO REMOVE/KEEP HASHTAGS
-#df['hashtags'] = df['text'].apply(lambda x: re.findall(r"#(\w+)", x))
 
 #segmenter using the word statistics from Twitter
 seg_tw = Segmenter(corpus="twitter")
@@ -52,9 +49,13 @@ seg_tw = Segmenter(corpus="twitter")
 # preprocess tweets
 # tweet-preprocessor package deals with URLs, mentions, reserved words, emojis, smileys
 p.set_options(p.OPT.URL, p.OPT.MENTION, p.OPT.RESERVED, p.OPT.EMOJI, p.OPT.SMILEY, p.OPT.NUMBER) # keep hashtags
+# clean text -> step 1
 df['tweet_preprocessed'] = df['text'].apply(lambda x: p.clean(x))
 
 
+
+
+# TODO not used
 # CLEANING: step 2 -> remove punctuation, tokenization, stopwords, stemming(?)
 # remove punctuation and numbers?
 # string.punctuation = '!"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~'
@@ -103,6 +104,13 @@ def lemmatizer(text):
     return text
 
 df['text_lemmatized'] = df['text_no_stopword'].apply(lambda x: lemmatizer(x))'''
+# TODO end not used
+
+
+
+
+
+
 
 # Everything put together in a list
 def clean_text(text):
@@ -113,8 +121,6 @@ def clean_text(text):
     text = [ps.stem(word) for word in tokens if (word not in stopword and word != '')]  # remove stopwords and stemming
     #text = [word for word in tokens if word not in stopword]  # remove stopwords and stemming
     return text
-
-print(clean_text("   ciao amico come    va   "))
 
 # Everything put together in a string
 def clean_text_string(text):
@@ -143,6 +149,44 @@ def clean_text_tuple(text):
     text_tuple = tuple(text)
     return text_tuple
 
+def to_date(date_time):
+    # split following datetime format in the dataset
+    date_time_obj = datetime.strptime(date_time, '%Y-%m-%d %H:%M:%S')
+    # date from datetime object
+    date = date_time_obj.date()
+    return date
+
+# clean text -> step 2
+df['text_cleaned'] = df['tweet_preprocessed'].apply(lambda x: clean_text(x))
+
+# just date
+df['date_only'] = df['date'].apply(lambda x: to_date(x))
+
+# list of hashtags added to a new column -> don't know if it is useful
+# DECOMMENT/COMMENT THIS LINE TO REMOVE/KEEP HASHTAGS
+df['hashtags'] = df['text'].apply(lambda x: re.findall(r"#(\w+)", x))
+
+
+# DATASET WITH HASHTAGS
+df.to_csv(r'/home/veror/PycharmProjects/DataMiningProj_OK/DATASET_covid19_tweets_cleaned_YEShashtags_FINAL.csv', index=False)
+
+
+
+
+
+
+'''def tot_clean_date_string(date_time, text, df):
+    cleaned_text = clean_text_string(df[text])
+    date = to_date(df[date_time])
+    return date, cleaned_text'''
+
+#df1 = df.iloc[:3]
+
+
+
+
+
+
 # clean dataset
 # df['text_cleaned'] = df['tweet_preprocessed'].apply(lambda x: clean_text(x))
 
@@ -163,14 +207,14 @@ file.close()'''
 
 # LIST OF TUPLES FOR APRIORI EFFICIENT_APRIORI
 # create list of tuples for apriori algorithm of python
-big_list = []
+'''big_list = []
 for (idx, row) in df.iterrows():
     big_list.append(clean_text_tuple(row.loc['tweet_preprocessed']))
 print(big_list)
 
 file = open('pickle_INPUT_list_of_tuple', 'wb')
 pickle.dump(big_list, file)
-file.close()
+file.close()'''
 
 
 
