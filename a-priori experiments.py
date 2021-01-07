@@ -21,7 +21,8 @@ from mlxtend.frequent_patterns import association_rules
 from mlxtend.preprocessing import TransactionEncoder
 
 df = pd.read_csv("/home/veror/PycharmProjects/DataMiningProj_OK/DATASET_covid19_tweets_cleaned_YEShashtags.csv")
-
+print(df.size)
+print(df)
 
 # TODO MLXTEND APRIORI
 
@@ -193,7 +194,7 @@ print(tuple(y))'''
 
 # EXPERIMENT APRIORI ON CLEANED DATA
 
-file_eff_apriori = open('pickle_INPUT_list_of_tuple', 'rb')
+'''file_eff_apriori = open('pickle_INPUT_list_of_tuple', 'rb')
 input_eff_apriori = pickle.load(file_eff_apriori)
 #print(input_eff_apriori)
 
@@ -211,7 +212,7 @@ print('------------------------------------------------------------------------'
 # second -> identify frequent itemsets
 itemsets, rules = apriori(input_eff_apriori, output_transaction_ids=True)
 print(itemsets)
-# {1: {('bacon',): ItemsetCount(itemset_count=3, members={0, 1, 2}), ...
+# {1: {('bacon',): ItemsetCount(itemset_count=3, members={0, 1, 2}), ...'''
 
 
 
