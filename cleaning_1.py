@@ -29,11 +29,17 @@ from nltk.tokenize import TweetTokenizer
 import pickle
 from datetime import datetime
 
-df = pd.read_csv("/home/veror/PycharmProjects/DataMiningProj_OK/DATASET_covid19_tweets.csv")
-# keep only columns "date" and "text"
-df.drop(['user_name', 'user_location', 'user_description', 'user_created', 'user_followers', 'user_friends',
-         'user_favourites', 'user_verified', 'hashtags', 'source', 'is_retweet'], axis=1, inplace=True)
 
+
+
+df = pd.read_csv("/home/veror/PycharmProjects/DataMiningProj_OK/DATASET_covid19_tweets.csv")
+#print(df.iloc[65503])
+# keep only columns "date" and "text" and "hashtags"
+df.drop(['user_name', 'user_location', 'user_description', 'user_created', 'user_followers', 'user_friends',
+         'user_favourites', 'user_verified', 'source', 'is_retweet'], axis=1, inplace=True)
+#print(df.iloc[65503])
+#print(df)
+#df.to_csv(r'/home/veror/PycharmProjects/DataMiningProj_OK/PROVA1.csv', index=False)
 #segmenter using the word statistics from Twitter
 seg_tw = Segmenter(corpus="twitter")
 
@@ -51,7 +57,9 @@ seg_tw = Segmenter(corpus="twitter")
 p.set_options(p.OPT.URL, p.OPT.MENTION, p.OPT.RESERVED, p.OPT.EMOJI, p.OPT.SMILEY, p.OPT.NUMBER) # keep hashtags
 # clean text -> step 1
 df['tweet_preprocessed'] = df['text'].apply(lambda x: p.clean(x))
-
+#print(df)
+#df.to_csv(r'/home/veror/PycharmProjects/DataMiningProj_OK/PROVA.csv', index=False)
+print(df.iloc[65503])
 
 
 
@@ -149,6 +157,7 @@ def clean_text_tuple(text):
     text_tuple = tuple(text)
     return text_tuple
 
+# TODO not used
 def to_date(date_time):
     # split following datetime format in the dataset
     date_time_obj = datetime.strptime(date_time, '%Y-%m-%d %H:%M:%S')
@@ -156,21 +165,32 @@ def to_date(date_time):
     date = date_time_obj.date()
     return date
 
+
+
+
+
 # clean text -> step 2
 df['text_cleaned'] = df['tweet_preprocessed'].apply(lambda x: clean_text(x))
-
+df['text_cleaned_string'] = df['tweet_preprocessed'].apply(lambda x: clean_text_string(x))
+df['text_cleaned_tuple'] = df['tweet_preprocessed'].apply(lambda x: clean_text_tuple(x))
 # just date
 df['date_only'] = df['date'].apply(lambda x: to_date(x))
 
-# list of hashtags added to a new column -> don't know if it is useful
+# list of hashtags added to a new column -> don't know if it is useful -> NO we already have hashtags from the starting dataset
 # DECOMMENT/COMMENT THIS LINE TO REMOVE/KEEP HASHTAGS
-df['hashtags'] = df['text'].apply(lambda x: re.findall(r"#(\w+)", x))
+#df['hashtags'] = df['text'].apply(lambda x: re.findall(r"#(\w+)", x))
 
+print(df.iloc[65503])
+df1 = pd.DataFrame(df.groupby('date_only')['text_cleaned'].apply(list).reset_index())
+df2 = pd.DataFrame(df.groupby('date_only')['text_cleaned_string'].apply(list).reset_index())
+df3 = pd.DataFrame(df.groupby('date_only')['text_cleaned_tuple'].apply(list).reset_index())
+print(df1)
 
 # DATASET WITH HASHTAGS
-df.to_csv(r'/home/veror/PycharmProjects/DataMiningProj_OK/DATASET_covid19_tweets_cleaned_YEShashtags_FINAL.csv', index=False)
-
-
+df.to_csv(r'/home/veror/PycharmProjects/DataMiningProj_OK/DATASET_covid19_tweets_cleaned_FINAL_FINAL.csv', index=False)
+df1.to_csv(r'/home/veror/PycharmProjects/DataMiningProj_OK/DATASET_covid19_group_text.csv', index=False)
+df2.to_csv(r'/home/veror/PycharmProjects/DataMiningProj_OK/DATASET_covid19_group_string.csv', index=False)
+df3.to_csv(r'/home/veror/PycharmProjects/DataMiningProj_OK/DATASET_covid19_group_tuple.csv', index=False)
 
 
 
