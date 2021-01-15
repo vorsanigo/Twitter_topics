@@ -31,16 +31,19 @@ from datetime import datetime
 
 
 
-
+# read the starting dataset
 df = pd.read_csv("/home/veror/PycharmProjects/DataMiningProj_OK/DATASET_covid19_tweets.csv")
 #print(df.iloc[65503])
+
 # keep only columns "date" and "text" and "hashtags"
 df.drop(['user_name', 'user_location', 'user_description', 'user_created', 'user_followers', 'user_friends',
          'user_favourites', 'user_verified', 'source', 'is_retweet'], axis=1, inplace=True)
+
 #print(df.iloc[65503])
 #print(df)
 #df.to_csv(r'/home/veror/PycharmProjects/DataMiningProj_OK/PROVA1.csv', index=False)
 #segmenter using the word statistics from Twitter
+# TODO PROBABLY TO ELIMINATE
 seg_tw = Segmenter(corpus="twitter")
 
 # PROBABLY NOT USEFUL
@@ -51,15 +54,18 @@ seg_tw = Segmenter(corpus="twitter")
     #print(i)
     #print(df.loc[v,'text'])
 
+
+
 # CLEANING
-# preprocess tweets
-# tweet-preprocessor package deals with URLs, mentions, reserved words, emojis, smileys
+
+# step 1: preprocess tweets
+# tweet-preprocessor package deals with URLs, mentions, reserved words, emojis, smileys, we keep only hashtags
 p.set_options(p.OPT.URL, p.OPT.MENTION, p.OPT.RESERVED, p.OPT.EMOJI, p.OPT.SMILEY, p.OPT.NUMBER) # keep hashtags
-# clean text -> step 1
 df['tweet_preprocessed'] = df['text'].apply(lambda x: p.clean(x))
+
 #print(df)
 #df.to_csv(r'/home/veror/PycharmProjects/DataMiningProj_OK/PROVA.csv', index=False)
-print(df.iloc[65503])
+#print(df.iloc[65503])
 
 
 
@@ -118,9 +124,9 @@ df['text_lemmatized'] = df['text_no_stopword'].apply(lambda x: lemmatizer(x))'''
 
 
 
+# Different functions to have the cleaned text in different possible forms
 
-
-# Everything put together in a list
+# Clean and put the text into a list
 def clean_text(text):
     text_lc = "".join([word.lower() for word in text if word not in string.punctuation]) # remove puntuation
     text_rc = re.sub('[0-9]+', '', text_lc)
@@ -130,7 +136,7 @@ def clean_text(text):
     #text = [word for word in tokens if word not in stopword]  # remove stopwords and stemming
     return text
 
-# Everything put together in a string
+# Clean and put the text into a string
 def clean_text_string(text):
     text_lc = "".join([word.lower() for word in text if word not in string.punctuation]) # remove puntuation
     text_rc = re.sub('[0-9]+', '', text_lc)
@@ -146,7 +152,7 @@ def clean_text_string(text):
             text = text + " " + ps.stem(word) # remove stopwords and stemming
     return text
 
-# Everything put together for apriori algorithm
+# Clean and put the text into a tuple
 def clean_text_tuple(text):
     text_lc = "".join([word.lower() for word in text if word not in string.punctuation]) # remove puntuation
     text_rc = re.sub('[0-9]+', '', text_lc)
@@ -157,7 +163,7 @@ def clean_text_tuple(text):
     text_tuple = tuple(text)
     return text_tuple
 
-# TODO not used
+# TODO not used ????????????? used later
 def to_date(date_time):
     # split following datetime format in the dataset
     date_time_obj = datetime.strptime(date_time, '%Y-%m-%d %H:%M:%S')
@@ -169,11 +175,11 @@ def to_date(date_time):
 
 
 
-# clean text -> step 2
+# step 2: apply the cleaning functions on the preprocessed tweets and save results into new columns in the dataframe
 df['text_cleaned'] = df['tweet_preprocessed'].apply(lambda x: clean_text(x))
 df['text_cleaned_string'] = df['tweet_preprocessed'].apply(lambda x: clean_text_string(x))
 df['text_cleaned_tuple'] = df['tweet_preprocessed'].apply(lambda x: clean_text_tuple(x))
-# just date
+# create column containing only the date, without the time
 df['date_only'] = df['date'].apply(lambda x: to_date(x))
 
 
@@ -185,19 +191,30 @@ df['date_only'] = df['date'].apply(lambda x: to_date(x))
 #df['hashtags'] = df['text'].apply(lambda x: re.findall(r"#(\w+)", x))
 
 
-# DATASET GROUPBY DATE
-#df1 = pd.DataFrame(df.groupby('date_only')['text_cleaned'].apply(list).reset_index())
-#df2 = pd.DataFrame(df.groupby('date_only')['text_cleaned_string'].apply(list).reset_index())
+# create the datsets grouped by date
+df1 = pd.DataFrame(df.groupby('date_only')['text_cleaned'].apply(list).reset_index())
+df2 = pd.DataFrame(df.groupby('date_only')['text_cleaned_string'].apply(list).reset_index())
 df3 = pd.DataFrame(df.groupby('date_only')['text_cleaned_tuple'].apply(list).reset_index())
 
 
-# DATASET WITH HASHTAGS
+# save the datasets created into csv
 # SEPARATORE E' ' ' !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-#df.to_csv(r'/home/veror/PycharmProjects/DataMiningProj_OK/DATASET_covid19_tweets_cleaned_PR.csv', index=False, sep=' ', line_terminator='\n')
-#df1.to_csv(r'/home/veror/PycharmProjects/DataMiningProj_OK/DATASET_covid19_group_text.csv', index=False)
-#df2.to_csv(r'/home/veror/PycharmProjects/DataMiningProj_OK/DATASET_covid19_group_string.csv', index=False)
+df.to_csv(r'/home/veror/PycharmProjects/DataMiningProj_OK/DATASET_covid19_tweets_cleaned_PR.csv', index=False, sep=' ', line_terminator='\n')
+df1.to_csv(r'/home/veror/PycharmProjects/DataMiningProj_OK/DATASET_covid19_group_text.csv', index=False)
+df2.to_csv(r'/home/veror/PycharmProjects/DataMiningProj_OK/DATASET_covid19_group_string.csv', index=False)
 df3.to_csv(r'/home/veror/PycharmProjects/DataMiningProj_OK/DATASET_covid19_group_tuple.csv', index=False, sep=' ')
 df3.to_csv(r'/home/veror/PycharmProjects/DataMiningProj_OK/DATASET_covid19_group_tuple_sep_comma.csv', index=False)
+
+
+
+
+
+
+
+
+
+
+
 
 
 
