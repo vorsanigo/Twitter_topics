@@ -20,9 +20,9 @@ from mlxtend.frequent_patterns import fpgrowth
 from mlxtend.frequent_patterns import association_rules
 from mlxtend.preprocessing import TransactionEncoder
 
-df = pd.read_csv("/home/veror/PycharmProjects/DataMiningProj_OK/DATASET_covid19_tweets_cleaned_YEShashtags.csv")
+'''df = pd.read_csv("/home/veror/PycharmProjects/DataMiningProj_OK/DATASET_covid19_tweets_cleaned_YEShashtags.csv")
 print(df.size)
-print(df)
+print(df)'''
 
 # TODO MLXTEND APRIORI
 
@@ -157,10 +157,10 @@ print("AAA", big_list)'''
 # TODO EFFICIENT APRIORI
 
 # Original data
-'''transactions = [('eggs', 'bacon', 'soup'),
-                ('eggs', 'bacon', 'apple', 'pen', 'soup'),
-                ('soup', 'bacon', 'banana', 'cucumber', 'vodka', 'soup')]
-
+transactions = [['eggs', 'bacon', 'soup'],
+                ['eggs', 'bacon', 'apple', 'pen', 'soup'],
+                ['soup', 'bacon', 'banana', 'cucumber', 'vodka', 'soup']
+]
 # Convert to panas.DataFrame
 df = pd.DataFrame(transactions)
 print(df)
@@ -178,7 +178,7 @@ print('------------------------------------------------------------------------'
 itemsets, rules = apriori(transactions, output_transaction_ids=True)
 print(itemsets)
 # {1: {('bacon',): ItemsetCount(itemset_count=3, members={0, 1, 2}), ...
-'''
+
 
 '''# experiments on "COPY_covid19_tweets_cleaned_2.csv"
 df = pd.read_csv("COPY_covid19_tweets_cleaned_2 .csv")
