@@ -175,27 +175,29 @@ df['text_cleaned_string'] = df['tweet_preprocessed'].apply(lambda x: clean_text_
 df['text_cleaned_tuple'] = df['tweet_preprocessed'].apply(lambda x: clean_text_tuple(x))
 # just date
 df['date_only'] = df['date'].apply(lambda x: to_date(x))
-print(df)
 
-# TODO SEPARATORE E' ' ' !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-#df.to_csv(r'/home/veror/PycharmProjects/DataMiningProj_OK/DATASET_covid19_tweets_cleaned_PR.csv', index=False, sep=' ', line_terminator='\n')
+
+
 
 
 # list of hashtags added to a new column -> don't know if it is useful -> NO we already have hashtags from the starting dataset
 # DECOMMENT/COMMENT THIS LINE TO REMOVE/KEEP HASHTAGS
 #df['hashtags'] = df['text'].apply(lambda x: re.findall(r"#(\w+)", x))
 
-'''print(df.iloc[65503])
-df1 = pd.DataFrame(df.groupby('date_only')['text_cleaned'].apply(list).reset_index())
-df2 = pd.DataFrame(df.groupby('date_only')['text_cleaned_string'].apply(list).reset_index())
+
+# DATASET GROUPBY DATE
+#df1 = pd.DataFrame(df.groupby('date_only')['text_cleaned'].apply(list).reset_index())
+#df2 = pd.DataFrame(df.groupby('date_only')['text_cleaned_string'].apply(list).reset_index())
 df3 = pd.DataFrame(df.groupby('date_only')['text_cleaned_tuple'].apply(list).reset_index())
-print(df1)
+
 
 # DATASET WITH HASHTAGS
-df.to_csv(r'/home/veror/PycharmProjects/DataMiningProj_OK/DATASET_covid19_tweets_cleaned_FINAL_FINAL.csv', index=False)
-df1.to_csv(r'/home/veror/PycharmProjects/DataMiningProj_OK/DATASET_covid19_group_text.csv', index=False)
-df2.to_csv(r'/home/veror/PycharmProjects/DataMiningProj_OK/DATASET_covid19_group_string.csv', index=False)
-df3.to_csv(r'/home/veror/PycharmProjects/DataMiningProj_OK/DATASET_covid19_group_tuple.csv', index=False)'''
+# SEPARATORE E' ' ' !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+#df.to_csv(r'/home/veror/PycharmProjects/DataMiningProj_OK/DATASET_covid19_tweets_cleaned_PR.csv', index=False, sep=' ', line_terminator='\n')
+#df1.to_csv(r'/home/veror/PycharmProjects/DataMiningProj_OK/DATASET_covid19_group_text.csv', index=False)
+#df2.to_csv(r'/home/veror/PycharmProjects/DataMiningProj_OK/DATASET_covid19_group_string.csv', index=False)
+df3.to_csv(r'/home/veror/PycharmProjects/DataMiningProj_OK/DATASET_covid19_group_tuple.csv', index=False, sep=' ')
+df3.to_csv(r'/home/veror/PycharmProjects/DataMiningProj_OK/DATASET_covid19_group_tuple_sep_comma.csv', index=False)
 
 
 
