@@ -8,8 +8,11 @@ def literal_eval_special(element):
     return literal_eval(element)
 
 # TODO SEPARATOREEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
-df = pd.read_csv("/home/veror/PycharmProjects/DataMiningProj_OK/DATASET_covid19_tweets_cleaned_PR.csv", sep=' ')
+df = pd.read_csv("/home/veror/PycharmProjects/DataMiningProj_OK/DATASET_covid19_tweets_cleaned_OK.csv", sep=' ')
 print(df)
+
+df.drop([], axis=1, inplace=True)
+
 
 
 
