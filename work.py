@@ -196,7 +196,8 @@ def naive_fun(transactions_string):
     #if len(transactions) < 2:
       #continue
     sub.sort()
-    for i in range(len(sub)):
+    #for i in range(len(sub)): # TODO così non funzionaaaaa perché ci sono troppe combinazioni
+    for i in range(4):
       #print(i)
       if not (i+1 in dict_counters.keys()):
         dict_counters[i+1] = Counter()
@@ -205,28 +206,28 @@ def naive_fun(transactions_string):
           '''if not (el in dict_count.keys()):
             dict_count[el] = 1 / len(transactions)
           else:'''
-          dict_counters[i+1][el] += 1 #/ len(transactions)
+          dict_counters[i+1][el] += 1 / len(transactions)
   for key in dict_counters:
-    dict_counters[key] = dict_counters[key].most_common(2)
+    dict_counters[key] = dict_counters[key].most_common(10)
   return dict_counters
 
 
-start_time = time.time()
+'''start_time = time.time()
 for i in range(25):
   #print(df_grouped['text_cleaned_tuple'].values[i])
   result = naive_fun(df_grouped['text_cleaned_tuple'].values[i])
-  '''result = naive_fun([
+  result = naive_fun([
       ['John', 'Mark', 'Jennifer'],
       ['John'],
       ['Joe', 'Mark'],
       ['John', 'Anna', 'Jennifer'],
       ['Jennifer', 'John', 'Mark']
-      ])'''
+      ])
   print(result)
   print("\n")
   #transactions_topics.append(result[1])
 print('Time to find frequent itemset')
-print("--- %s seconds ---" % (time.time() - start_time))
+print("--- %s seconds ---" % (time.time() - start_time))'''
 
 
 # HERE: NOT ALL THE POSSIBLE SUBSETS OF ALL LENGTH
@@ -257,9 +258,9 @@ def naive_fun_2(transactions_string):
   return(tuples_1.most_common(10), tuples_2.most_common(10), tuples_3.most_common(10), tuples_4.most_common(10))
 
 '''start_time = time.time()
-for i in range(1):
+for i in range(25):
   #print(df_grouped['text_cleaned_tuple'].values[i])
-  #result = naive_fun(df_grouped['text_cleaned_tuple'].values[i])
+  result = naive_fun(df_grouped['text_cleaned_tuple'].values[i])
   result = naive_fun_2([
       ['John', 'Mark', 'Jennifer'],
       ['John'],
