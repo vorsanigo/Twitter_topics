@@ -50,8 +50,8 @@ def eff_apriori_fun(transactions_string): # , min_sup, min_conf, min_len, min_li
   -> (dict, list, list)'''
 
   transactions = pd.eval(transactions_string)
-
-  itemsets, rules = apriori(transactions, min_support=0.03, min_confidence=0.0001)
+  #transactions = transactions_string
+  itemsets, rules = apriori(transactions, min_support=0.03, min_confidence=0.5)
   for rule in rules:
     print(rule)
   '''rules_rhs = filter(lambda rule: len(rule.lhs) == 2 and len(rule.rhs) == 1, rules)
@@ -68,7 +68,20 @@ def eff_apriori_fun(transactions_string): # , min_sup, min_conf, min_len, min_li
 
   return itemsets, list_itemsets, list_freq
   
-  
+# apply apriori to the tweets on each day separately, save the result in the list transactions_topics
+'''transactions_topics = []
+start_time = time.time()
+for i in range(1):
+  #print(df_grouped['text_cleaned_tuple'].values[i])
+  result = eff_apriori_fun(df_grouped['text_cleaned_tuple'].values[i])
+  print(result)
+  print("\n")
+  transactions_topics.append(result[1])
+print('Time to find frequent itemset')
+print("--- %s seconds ---" % (time.time() - start_time))'''
+
+
+
 # apply  apriori on each day
 #df_grouped['result_apriori'] = df_grouped['text_cleaned_tuple'].apply(lambda x: apriori_fun(x))
 
@@ -84,17 +97,7 @@ def eff_apriori_fun(transactions_string): # , min_sup, min_conf, min_len, min_li
 
 
 
-# apply apriori to the tweets on each day separately, save the result in the list transactions_topics
-transactions_topics = []
-'''start_time = time.time()
-for i in range(5):
-  #print(df_grouped['text_cleaned_tuple'].values[i])
-  result = eff_apriori_fun(df_grouped['text_cleaned_tuple'].values[i])
-  print(result)
-  print("\n")
-  transactions_topics.append(result[1])
-print('Time to find frequent itemset')
-print("--- %s seconds ---" % (time.time() - start_time))'''
+
 
 #print("------------------------------------------")
 #print(transactions_topics)
@@ -161,16 +164,23 @@ def mlx_apriori_fun(transactions_string):
   return(res)
 
 
-'''transactions_topics = []
+transactions_topics = []
 start_time = time.time()
 for i in range(25):
   #print(df_grouped['text_cleaned_tuple'].values[i])
-  result = mlx_apriori_fun(df_grouped['text_cleaned_tuple'].values[i])
+  #result = mlx_apriori_fun(df_grouped['text_cleaned_tuple'].values[i])
+  result = eff_apriori_fun([
+    ['John', 'Mark', 'Jennifer'],
+    ['John'],
+    ['Joe', 'Mark'],
+    ['John', 'Anna', 'Jennifer'],
+    ['Jennifer', 'John', 'Mark', 'Mark']
+  ])
   print(result)
   print("\n")
   #transactions_topics.append(result[1])
 print('Time to find frequent itemset')
-print("--- %s seconds ---" % (time.time() - start_time))'''
+print("--- %s seconds ---" % (time.time() - start_time))
 
 # END MLX APRIORI
 #---------------------------------------------------------------------------------------------------------------
@@ -192,6 +202,7 @@ def naive_fun(transactions_string):
   tuples_3 = Counter()
   tuples_4 = Counter()'''
   dict_count = {}
+  dict_counters[1] = Counter()
   for sub in transactions:
     #if len(transactions) < 2:
       #continue
@@ -201,28 +212,21 @@ def naive_fun(transactions_string):
       #print(i)
       if not (i+1 in dict_counters.keys()):
         dict_counters[i+1] = Counter()
-      for el in combinations(sub, i+1):
+      for el in combinations(set(sub), i+1):
         if len(el) == len(set(el)):
           '''if not (el in dict_count.keys()):
             dict_count[el] = 1 / len(transactions)
           else:'''
-          dict_counters[i+1][el] += 1 / len(transactions)
+          dict_counters[i+1][el] += 1 #/ len(transactions)
   for key in dict_counters:
     dict_counters[key] = dict_counters[key].most_common(10)
   return dict_counters
 
 
 '''start_time = time.time()
-for i in range(25):
+for i in range(1):
   #print(df_grouped['text_cleaned_tuple'].values[i])
   result = naive_fun(df_grouped['text_cleaned_tuple'].values[i])
-  result = naive_fun([
-      ['John', 'Mark', 'Jennifer'],
-      ['John'],
-      ['Joe', 'Mark'],
-      ['John', 'Anna', 'Jennifer'],
-      ['Jennifer', 'John', 'Mark']
-      ])
   print(result)
   print("\n")
   #transactions_topics.append(result[1])
@@ -242,38 +246,39 @@ def naive_fun_2(transactions_string):
   tuples_4 = Counter()
   for sub in transactions:
     sub.sort()
-    for singleton in combinations(sub, 1):
-      if len(singleton) == len(set(singleton)):
-        tuples_1[singleton] += 1/len(transactions)
-    for pair in combinations(sub, 2):
+    for singleton in set(sub):
+      #if len(singleton) == len(set(singleton)):
+      tuples_1[singleton] += 1#/len(transactions)
+    for pair in combinations(set(sub), 2):
       if len(pair) == len(set(pair)):
-        print(pair)
-        tuples_2[pair] += 1/len(transactions)
-    for triple in combinations(sub, 3):
+        #print(pair)
+        tuples_2[pair] += 1#/len(transactions)
+    for triple in combinations(set(sub), 3):
       if len(triple) == len(set(triple)):
-        tuples_3[triple] += 1/len(transactions)
-    for tuple4 in combinations(sub, 4):
+        tuples_3[triple] += 1#/len(transactions)
+    for tuple4 in combinations(set(sub), 4):
       if len(tuple4) == len(set(tuple4)):
-        tuples_4[tuple4] += 1/len(transactions)
+        tuples_4[tuple4] += 1#/len(transactions)
   return(tuples_1.most_common(10), tuples_2.most_common(10), tuples_3.most_common(10), tuples_4.most_common(10))
 
-'''start_time = time.time()
-for i in range(25):
+start_time = time.time()
+for i in range(1):
   #print(df_grouped['text_cleaned_tuple'].values[i])
-  result = naive_fun(df_grouped['text_cleaned_tuple'].values[i])
-  result = naive_fun_2([
-      ['John', 'Mark', 'Jennifer'],
-      ['John'],
-      ['Joe', 'Mark'],
-      ['John', 'Anna', 'Jennifer'],
-      ['Jennifer', 'John', 'Mark']
-      ])
+  result = naive_fun_2(df_grouped['text_cleaned_tuple'].values[i])
   print(result)
   print("\n")
   #transactions_topics.append(result[1])
 print('Time to find frequent itemset')
-print("--- %s seconds ---" % (time.time() - start_time))'''
+print("--- %s seconds ---" % (time.time() - start_time))
 
+
+'''result = naive_fun_2([
+    ['John', 'Mark', 'Jennifer'],
+    ['John'],
+    ['Joe', 'Mark'],
+    ['John', 'Anna', 'Jennifer'],
+    ['Jennifer', 'John', 'Mark', 'Mark']
+  ])'''
 
 
 
