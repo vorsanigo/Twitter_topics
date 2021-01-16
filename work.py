@@ -9,6 +9,12 @@ from collections import Counter
 from itertools import combinations
 import itertools
 
+
+# TODO CAPIRE PERCHE' ALCUNI ITEMSETS LI CONTA IN NUMERO != USANDO LE FZ !=
+# TODO RAGGRUPPARE PER DATA I TOPIC FREQUENTI COME FATTO PER EFFICIENT APRIORI
+# TODO PLOTTARE I TOPIC IMPORTANTI -> COME LI SCEGLIAMO ???????????
+
+
 # Here we apply the efficient-apriori on the cleaned tweets for each day separately to find, for each day, the frequent
 # topics, given byy the frequent itemsets of terms, then we check the frequence of each of them on the total number of days
 
