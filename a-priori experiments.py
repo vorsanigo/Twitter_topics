@@ -35,23 +35,23 @@ print(res)
 stringE = "come you hey friend eee"
 li = list(stringE.split(" "))
 print("eeeeeeeeeeeeeeeeeeeeeee")
-print(li)
-'''
+print(li)'''
+
 
 '''dataset_list_file = open('pickle_INPUT_list_of_list', 'rb')
 dataset_list = pickle.load(dataset_list_file)
-print(dataset_list)'''
+print(dataset_list)
 
 
-'''te_ary = te.fit(dataset_list).transform(dataset_list)
+te_ary = te.fit(dataset_list).transform(dataset_list)
 df1 = pd.DataFrame(te_ary, columns=te.columns_)
 print("-------------")
 print(df1)
 
 res = fpgrowth(df1, min_support=0.1, use_colnames=True)
-print(res)'''
+print(res)
 
-'''def get_list(str):
+def get_list(str):
   li = list(str.split(" "))
   return li
 
@@ -63,7 +63,7 @@ for (idx, row) in df.iterrows():
     print(row.loc['text_cleaned_string'])
     row.loc['text_cleaned_string'].split(" ")
     #big_list.append(get_list(row.loc['text_cleaned_string']))
-print(big_list)
+print(big_list)'''
 
 transactions = [['eggs', 'bacon', 'soup'],
                 ['eggs', 'bacon', 'apple', 'pen', 'soup'],
@@ -75,7 +75,7 @@ print("-------------")
 print(df1)
 
 res = fpgrowth(df1, min_support=0.6, use_colnames=True)
-print(res)'''
+print(res)
 
 # TODO END MLXTEND APRIORI
 
@@ -155,7 +155,7 @@ print("AAA", big_list)'''
 
 
 # TODO EFFICIENT APRIORI
-
+'''
 # Original data
 transactions = [['eggs', 'bacon', 'soup'],
                 ['eggs', 'bacon', 'apple', 'pen', 'soup'],
@@ -177,7 +177,7 @@ print('------------------------------------------------------------------------'
 # second -> identify frequent itemsets
 itemsets, rules = apriori(transactions, output_transaction_ids=True)
 print(itemsets)
-# {1: {('bacon',): ItemsetCount(itemset_count=3, members={0, 1, 2}), ...
+# {1: {('bacon',): ItemsetCount(itemset_count=3, members={0, 1, 2}), ...'''
 
 
 '''# experiments on "COPY_covid19_tweets_cleaned_2.csv"
