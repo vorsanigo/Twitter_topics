@@ -8,15 +8,17 @@ import time
 from collections import Counter
 from itertools import combinations
 import itertools
+import matplotlib
+import matplotlib.pyplot as plt
 
-
-# TODO CAPIRE PERCHE' ALCUNI ITEMSETS LI CONTA IN NUMERO != USANDO LE FZ !=
-# TODO RAGGRUPPARE PER DATA I TOPIC FREQUENTI COME FATTO PER EFFICIENT APRIORI
+# TODO CAPIRE PERCHE' ALCUNI ITEMSETS LI CONTA IN NUMERO != USANDO LE FZ != ------> forse ok
+# TODO RAGGRUPPARE PER DATA I TOPIC FREQUENTI COME FATTO PER EFFICIENT APRIORI ----> ok manca solo per mlx apriori
 # TODO PLOTTARE I TOPIC IMPORTANTI -> COME LI SCEGLIAMO ???????????
+# TODO CREATE NEW PICKLES WITH EFF APRIORI AND NAIVE
 
 
 # Here we apply the efficient-apriori on the cleaned tweets for each day separately to find, for each day, the frequent
-# topics, given byy the frequent itemsets of terms, then we check the frequence of each of them on the total number of days
+# topics, given by the frequent itemsets of terms, then we check the frequence of each of them on the total number of days
 
 # read cleaned dataframe -> not useful
 df = pd.read_csv("/home/veror/PycharmProjects/DataMiningProj_OK/DATASET_covid19_tweets_cleaned_OK.csv", sep=' ')
@@ -27,7 +29,9 @@ print("----------------------")
 df_grouped = pd.read_csv("/home/veror/PycharmProjects/DataMiningProj_OK/DATASET_covid19_group_tuple.csv", sep=' ')
 #print(dff)
 print("----------------------")
+list_date = df_grouped['date_only'].tolist()
 
+#print(df_grouped['text_cleaned_tuple'][0])
 '''df.drop([])
 df11 = df_grouped.head()
 print(df11)
@@ -76,15 +80,28 @@ def eff_apriori_fun(transactions_string): # , min_sup, min_conf, min_len, min_li
   dict_topic = {}
   for key in itemsets:
     for el in itemsets[key]:
-      dict_topic[el] = itemsets[key][el], itemsets[key][el]/len(transactions)
+      dict_topic[el] = itemsets[key][el], itemsets[key][el]/len(transactions) # topic: (tot num, freq)
 
   return dict_topic
 
 # todo correct one
+
+def count_itemset(tuple_topic, transactions): # da fare nel day in cui manca la freq
+  counter = 0
+  for tuple in transactions:
+    if set(tuple_topic).issubset(tuple):
+      counter += 1
+  return counter
+
+'''l = pd.eval(df_grouped['text_cleaned_tuple'][0])
+count = count_itemset(('covid', 'putin', 'russia'), l)
+print("COUNTER", count)'''
+
+
 # apply apriori to the tweets on each day separately, save the result in the list transactions_topics
-'''dict_day_topic = {}
+dict_day_topic = {}
 start_time = time.time()
-for i in range(2):
+for i in range(5):
   #print(df_grouped['text_cleaned_tuple'].values[i])
   result = eff_apriori_fun(df_grouped['text_cleaned_tuple'].values[i])
   print("RESULT:", result)
@@ -97,7 +114,8 @@ print('Time to find frequent itemset')
 print("--- %s seconds ---" % (time.time() - start_time))
 print("\n")
 
-dict_topic_day_num = {}
+# TODO 1)
+'''dict_topic_day_num = {}
 for day in dict_day_topic:
   #print("D", day)
   #print("E", dict_day_topic[day])
@@ -120,24 +138,100 @@ for day in dict_day_topic:
           list_num.append("not freq")
           list_freq.append("not freq")
       dict_topic_day_num[topic] = (count, list(zip(list_day, list_num, list_freq)))
-print("DICT TOPIC DAY NUM", dict_topic_day_num)'''
+print(dict_topic_day_num)'''
 
-# TODO SAVE INTO PICKLE FILE OUTPUT OF EFFFICIENT APRIORI
+# TODO 2)
+# TODO VARIANTE PER POTER CONTARE LE FREQUENZE DI TUTTI -> RALLENTA MOLTO !!!!!!!!!
+# TODO FORSE NON NECESSARIO SE NON CI INTERESSA L'ANDAMENTO NEGLI ALTRI GIORNI
+# TODO MAGARI SI PUÒ MIGLIORARE, MA APRIORI FORSE NON RIDA' FREQ DI QUELLI NON FREQUENTI
+dict_topic_day_num = {}
+for day in dict_day_topic:
+  #print("D", day)
+  #print("E", dict_day_topic[day])
+  for topic in dict_day_topic[day]:
+    #print("Q", topic)
+    if not (topic in dict_topic_day_num):
+      pos = 0
+      count = 0
+      list_day = []
+      list_num = []
+      list_freq = []
+      list_flag = []
+      #print("EEEEEEE", dict_day_topic[day].keys())
+      for day in dict_day_topic:
+        list_day.append(day)
+        if topic in dict_day_topic[day].keys():
+          count += 1
+          list_num.append(dict_day_topic[day][topic][0])
+          list_freq.append(dict_day_topic[day][topic][1])
+          list_flag.append('freq')
+          #print("DDDDDDDD", dict_day_topic[day][topic])
+        else:
+          transactions_string = df_grouped['text_cleaned_tuple'][pos]
+          transactions = pd.eval(transactions_string)
+          num = count_itemset(topic, transactions_string)
+          list_num.append(num)
+          list_freq.append(num/len(transactions))
+          list_flag.append('not_freq')
+          #list_num.append("not freq")
+          #list_freq.append("not freq")
+        pos += 1
+      dict_topic_day_num[topic] = (count, list(zip(list_day, list_num, list_freq, list_flag)))
+print("DICT TOPIC DAY NUM", dict_topic_day_num)
+
+# TODO example OUTPUT: dict_topic_day_num
+# 2 days -> day0, day1
+# {('covid',): (2, [('day0', 165, 0.559322033898305), ('day1', 10160, 0.6018600793791837)]), ('coronaviru',): (2, [('day0', 25, 0.0847457627118644), ('day1', 1438, 0.08518452698299864)]), ..., ('case', 'covid', 'identifi', 'spread'): (1, [('day0', 'not freq', 'not freq'), ('day1', 122, 0.007227060008293347)])}
 # save the dictionary dict_topic_days into a pickle file
-'''file1 = open('pickle_result_EFF_APRIORI', 'wb')
+
+'''
+file1 = open('pickle_result_EFF_APRIORI_OK', 'wb')
 pickle.dump(dict_topic_day_num, file1)
 file1.close()'''
 
 # read the dictionary dict_topic_days
-file1 = open('pickle_result_EFF_APRIORI', 'rb')
+'''file1 = open('pickle_result_EFF_APRIORI_OK', 'rb')
 pickle_eff_apriori = pickle.load(file1)
-print(pickle_eff_apriori)
+print(pickle_eff_apriori)'''
+
+
+
+
+'''list_keys_topic = list(pickle_eff_apriori.keys())
+items = pickle_eff_apriori.items()
+print(items)
+for el in pickle_eff_apriori:
+  for triple in el[1][1]:
+    if triple[1] == 'not freq':'''
+
+
+
+'''print(type(pickle_eff_apriori[('covid', 'india')]))
+
+print(type(list_keys_topic[0]))'''
+
+
+'''x = pickle_eff_apriori[('covid', 'india')]
+list_day = []
+list_num = []
+list_freq = []
+for y in x[1]:
+  #print(y)
+  if y[1] != 'not freq':
+    list_day.append(y[0])
+    list_num.append(y[1])
+    list_freq.append(y[2])'''
+
+'''fig, axes = plt.subplots(nrows=1, ncols=2, figsize=(5, 3))
+axes[0].plot(list_day, list_num)
+axes[1].plot(list_day, list_freq)'''
+'''#matplotlib.use('TkAgg')
+plt.plot(list_day, list_num)
+plt.show()
+plt.plot(list_day, list_freq)
+#plt.ylim(0, 1)
+plt.show()'''
 # todo end correct one
-
-file1 = open('pickle_result_NAIVE_APPROACH', 'rb')
-pickle_naive = pickle.load(file1)
-print(pickle_naive)
-
 
 
 # TODO NOT USED ANYMORE
