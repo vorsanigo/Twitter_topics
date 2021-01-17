@@ -59,8 +59,8 @@ def eff_apriori_fun(transactions_string): # , min_sup, min_conf, min_len, min_li
   print(len(transactions))
   #transactions = transactions_string
   itemsets, rules = apriori(transactions, min_support=0.03, min_confidence=0.5) # , output_transaction_ids=True
-  for rule in rules:
-    print(rule)
+  '''for rule in rules:
+    print(rule)'''
   '''rules_rhs = filter(lambda rule: len(rule.lhs) == 2 and len(rule.rhs) == 1, rules)
   for rule in sorted(rules_rhs, key=lambda rule: rule.lift):
     print(rule)  # Prints the rule and its confidence, support, lift, ...'''
@@ -84,15 +84,18 @@ def eff_apriori_fun(transactions_string): # , min_sup, min_conf, min_len, min_li
 # apply apriori to the tweets on each day separately, save the result in the list transactions_topics
 '''dict_day_topic = {}
 start_time = time.time()
-for i in range(2):
+for i in range(25):
   #print(df_grouped['text_cleaned_tuple'].values[i])
   result = eff_apriori_fun(df_grouped['text_cleaned_tuple'].values[i])
   print("RESULT:", result)
   print("\n")
   dict_day_topic["day"+str(i)] = result
-print(dict_day_topic)
+print("\n\n\n")
+print("DICT DAY TOPIC", dict_day_topic)
+print("\n")
 print('Time to find frequent itemset')
-print("--- %s seconds ---" % (time.time() - start_time))'''
+print("--- %s seconds ---" % (time.time() - start_time))
+print("\n")'''
 # todo end correct one
 
 '''transactions_topics = []
@@ -177,23 +180,27 @@ for day in dict_day_topic:
         else:
           list_num.append(0)
       dict_topic_day_num[topic] = (count, list_day, list_num)
-print(dict_topic_day_num)'''
+print("DICT TOPIC DAY NUM", dict_topic_day_num)'''
 # todo end correct one
 
 
 # TODO SAVE INTO PICKLE FILE OUTPUT OF EFFFICIENT APRIORI
-'''# save the dictionary dict_topic_days into a pickle file
-file1 = open('pickle_topic_freq_days', 'wb')
-pickle.dump(dict_topic_days, file1)
+# save the dictionary dict_topic_days into a pickle file
+'''file1 = open('pickle_result_EFF_APRIORI', 'wb')
+pickle.dump(dict_topic_day_num, file1)
 file1.close()'''
 
 # read the dictionary dict_topic_days
-'''file1 = open('pickle_topic_freq_days', 'rb')
+'''file1 = open('pickle_result_EFF_APRIORI', 'rb')
 pickle_topic_freq_days = pickle.load(file1)
 print(pickle_topic_freq_days)'''
 
 #END EFFICIENT APRIORI
 #----------------------------------------------------------------------------------------------------------------
+
+
+
+
 
 
 #-------------------------------------------------------------------------------------------------------------------
@@ -239,6 +246,10 @@ print("--- %s seconds ---" % (time.time() - start_time))'''
 #---------------------------------------------------------------------------------------------------------------
 
 
+
+
+
+
 #---------------------------------------------------------------------------------------------------------------
 #NAIVE APPROACH
 # https://stackoverflow.com/questions/31495507/finding-the-most-frequent-occurrences-of-pairs-in-a-list-of-lists
@@ -280,6 +291,7 @@ def naive_fun(transactions_string):
   #print(dict_topic)
   return dict_topic #dict_counters
 
+# todo correct
 dict_day_topic = {}
 start_time = time.time()
 for i in range(1):
@@ -313,6 +325,7 @@ for day in dict_day_topic:
           list_num.append(0)
       dict_topic_day_num[topic] = (count, list_day, list_num)
 print(dict_topic_day_num)
+# todo end correct
 
 '''start_time = time.time()
 for i in range(1):
@@ -324,7 +337,7 @@ for i in range(1):
 print('Time to find frequent itemset')
 print("--- %s seconds ---" % (time.time() - start_time))'''
 
-
+# TODO if we want to use this we need to also change a bit as in naive_fun
 # HERE: NOT ALL THE POSSIBLE SUBSETS OF ALL LENGTH -> single cases separated
 def naive_fun_2(transactions_string):
 
@@ -371,7 +384,8 @@ print("--- %s seconds ---" % (time.time() - start_time))'''
     ['Jennifer', 'John', 'Mark', 'Mark']
   ])'''
 
-
+# END NAIVE APPROACH
+# ---------------------------------------------------------------------------------------------------------------
 
 
 
