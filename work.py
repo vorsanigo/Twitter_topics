@@ -101,7 +101,7 @@ print("COUNTER", count)'''
 # apply apriori to the tweets on each day separately, save the result in the list transactions_topics
 dict_day_topic = {}
 start_time = time.time()
-for i in range(5):
+for i in range(25):
   #print(df_grouped['text_cleaned_tuple'].values[i])
   result = eff_apriori_fun(df_grouped['text_cleaned_tuple'].values[i])
   print("RESULT:", result)
@@ -179,15 +179,15 @@ for day in dict_day_topic:
       dict_topic_day_num[topic] = (count, list(zip(list_day, list_num, list_freq, list_flag)))
 print("DICT TOPIC DAY NUM", dict_topic_day_num)
 
-# TODO example OUTPUT: dict_topic_day_num
+# TODO example OUTPUT: dict_topic_day_num -> version 1
 # 2 days -> day0, day1
 # {('covid',): (2, [('day0', 165, 0.559322033898305), ('day1', 10160, 0.6018600793791837)]), ('coronaviru',): (2, [('day0', 25, 0.0847457627118644), ('day1', 1438, 0.08518452698299864)]), ..., ('case', 'covid', 'identifi', 'spread'): (1, [('day0', 'not freq', 'not freq'), ('day1', 122, 0.007227060008293347)])}
 # save the dictionary dict_topic_days into a pickle file
 
-'''
-file1 = open('pickle_result_EFF_APRIORI_OK', 'wb')
+
+file1 = open('pickle_result_EFF_APRIORI_OK_ version_2', 'wb')
 pickle.dump(dict_topic_day_num, file1)
-file1.close()'''
+file1.close()
 
 # read the dictionary dict_topic_days
 '''file1 = open('pickle_result_EFF_APRIORI_OK', 'rb')
@@ -222,15 +222,15 @@ for y in x[1]:
     list_num.append(y[1])
     list_freq.append(y[2])'''
 
-'''fig, axes = plt.subplots(nrows=1, ncols=2, figsize=(5, 3))
+fig, axes = plt.subplots(nrows=1, ncols=2, figsize=(5, 3))
 axes[0].plot(list_day, list_num)
-axes[1].plot(list_day, list_freq)'''
-'''#matplotlib.use('TkAgg')
+axes[1].plot(list_day, list_freq)
+#matplotlib.use('TkAgg')
 plt.plot(list_day, list_num)
 plt.show()
 plt.plot(list_day, list_freq)
 #plt.ylim(0, 1)
-plt.show()'''
+plt.show()
 # todo end correct one
 
 
