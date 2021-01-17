@@ -56,8 +56,9 @@ def eff_apriori_fun(transactions_string): # , min_sup, min_conf, min_len, min_li
   -> (dict, list, list)'''
 
   transactions = pd.eval(transactions_string)
+  print(len(transactions))
   #transactions = transactions_string
-  itemsets, rules = apriori(transactions, min_support=0.03, min_confidence=0.5)
+  itemsets, rules = apriori(transactions, min_support=0.03, min_confidence=0.5) # , output_transaction_ids=True
   for rule in rules:
     print(rule)
   '''rules_rhs = filter(lambda rule: len(rule.lhs) == 2 and len(rule.rhs) == 1, rules)
@@ -65,16 +66,35 @@ def eff_apriori_fun(transactions_string): # , min_sup, min_conf, min_len, min_li
     print(rule)  # Prints the rule and its confidence, support, lift, ...'''
   #print(itemsets)
 
-  list_itemsets = []
+  '''list_itemsets = []
   list_freq = []
   for key in itemsets:
     for el in itemsets[key]:
       list_itemsets.append(el)
-      list_freq.append(itemsets[key][el])
+      list_freq.append(itemsets[key][el])'''
 
-  return itemsets, list_itemsets, list_freq
-  
+  dict_topic = {}
+  for key in itemsets:
+    for el in itemsets[key]:
+      dict_topic[el] = itemsets[key][el], itemsets[key][el]/len(transactions)
+
+  return dict_topic
+
+# todo correct one
 # apply apriori to the tweets on each day separately, save the result in the list transactions_topics
+'''dict_day_topic = {}
+start_time = time.time()
+for i in range(2):
+  #print(df_grouped['text_cleaned_tuple'].values[i])
+  result = eff_apriori_fun(df_grouped['text_cleaned_tuple'].values[i])
+  print("RESULT:", result)
+  print("\n")
+  dict_day_topic["day"+str(i)] = result
+print(dict_day_topic)
+print('Time to find frequent itemset')
+print("--- %s seconds ---" % (time.time() - start_time))'''
+# todo end correct one
+
 '''transactions_topics = []
 start_time = time.time()
 for i in range(1):
@@ -86,7 +106,7 @@ for i in range(1):
 print('Time to find frequent itemset')
 print("--- %s seconds ---" % (time.time() - start_time))'''
 
-
+#print(set(zip([1,2,3], [4,5,6])))
 
 # apply  apriori on each day
 #df_grouped['result_apriori'] = df_grouped['text_cleaned_tuple'].apply(lambda x: apriori_fun(x))
@@ -136,13 +156,39 @@ for day in pickle_topics:
         pos += 1
       dict_topic_days[topic] = (count, list_pos)'''
 
+# todo correct one
+'''dict_topic_day_num = {}
+for day in dict_day_topic:
+  #print("D", day)
+  #print("E", dict_day_topic[day])
+  for topic in dict_day_topic[day]:
+    #print("Q", topic)
+    if not (topic in dict_topic_day_num):
+      count = 0
+      list_day = []
+      list_num = []
+      #print("EEEEEEE", dict_day_topic[day].keys())
+      for day in dict_day_topic:
+        list_day.append(day)
+        if topic in dict_day_topic[day].keys():
+          count += 1
+          list_num.append(dict_day_topic[day][topic][0])
+          #print("DDDDDDDD", dict_day_topic[day][topic])
+        else:
+          list_num.append(0)
+      dict_topic_day_num[topic] = (count, list_day, list_num)
+print(dict_topic_day_num)'''
+# todo end correct one
+
+
+# TODO SAVE INTO PICKLE FILE OUTPUT OF EFFFICIENT APRIORI
 '''# save the dictionary dict_topic_days into a pickle file
 file1 = open('pickle_topic_freq_days', 'wb')
 pickle.dump(dict_topic_days, file1)
 file1.close()'''
 
-'''# read the dictionary dict_topic_days
-file1 = open('pickle_topic_freq_days', 'rb')
+# read the dictionary dict_topic_days
+'''file1 = open('pickle_topic_freq_days', 'rb')
 pickle_topic_freq_days = pickle.load(file1)
 print(pickle_topic_freq_days)'''
 
@@ -170,23 +216,24 @@ def mlx_apriori_fun(transactions_string):
   return(res)
 
 
-transactions_topics = []
+'''transactions_topics = []
 start_time = time.time()
 for i in range(25):
   #print(df_grouped['text_cleaned_tuple'].values[i])
-  #result = mlx_apriori_fun(df_grouped['text_cleaned_tuple'].values[i])
-  result = eff_apriori_fun([
+  result = mlx_apriori_fun(df_grouped['text_cleaned_tuple'].values[i])
+  print(result)
+  print("\n")
+  #transactions_topics.append(result[1])
+print('Time to find frequent itemset')
+print("--- %s seconds ---" % (time.time() - start_time))'''
+
+'''result = eff_apriori_fun([
     ['John', 'Mark', 'Jennifer'],
     ['John'],
     ['Joe', 'Mark'],
     ['John', 'Anna', 'Jennifer'],
     ['Jennifer', 'John', 'Mark', 'Mark']
-  ])
-  print(result)
-  print("\n")
-  #transactions_topics.append(result[1])
-print('Time to find frequent itemset')
-print("--- %s seconds ---" % (time.time() - start_time))
+  ])'''
 
 # END MLX APRIORI
 #---------------------------------------------------------------------------------------------------------------
@@ -196,7 +243,7 @@ print("--- %s seconds ---" % (time.time() - start_time))
 #NAIVE APPROACH
 # https://stackoverflow.com/questions/31495507/finding-the-most-frequent-occurrences-of-pairs-in-a-list-of-lists
 
-# HERE: ALL THE POSSIBLE L
+# HERE: ALL THE POSSIBLE L -> only until 4, since more there is a problem with memory -> loop for all the cases
 def naive_fun(transactions_string):
 
   transactions = pd.eval(transactions_string)
@@ -207,8 +254,7 @@ def naive_fun(transactions_string):
   tuples_2 = Counter()
   tuples_3 = Counter()
   tuples_4 = Counter()'''
-  dict_count = {}
-  dict_counters[1] = Counter()
+  #dict_counters[1] = Counter()
   for sub in transactions:
     #if len(transactions) < 2:
       #continue
@@ -223,10 +269,28 @@ def naive_fun(transactions_string):
           '''if not (el in dict_count.keys()):
             dict_count[el] = 1 / len(transactions)
           else:'''
+          #print(dict_counters[i+1])
           dict_counters[i+1][el] += 1 #/ len(transactions)
+  dict_topic = {}
   for key in dict_counters:
     dict_counters[key] = dict_counters[key].most_common(10)
-  return dict_counters
+    for el in dict_counters[key]:
+      print("EL", el)
+      dict_topic[el[0]] = el[1]
+  #print(dict_topic)
+  return dict_topic #dict_counters
+
+dict_day_topic = {}
+start_time = time.time()
+for i in range(1):
+  #print(df_grouped['text_cleaned_tuple'].values[i])
+  result = naive_fun(df_grouped['text_cleaned_tuple'].values[i])
+  print("RESULT:", result)
+  print("\n")
+  #dict_day_topic["day"+str(i)] = result
+print(dict_day_topic)
+print('Time to find frequent itemset')
+print("--- %s seconds ---" % (time.time() - start_time))
 
 
 '''start_time = time.time()
@@ -240,7 +304,7 @@ print('Time to find frequent itemset')
 print("--- %s seconds ---" % (time.time() - start_time))'''
 
 
-# HERE: NOT ALL THE POSSIBLE SUBSETS OF ALL LENGTH
+# HERE: NOT ALL THE POSSIBLE SUBSETS OF ALL LENGTH -> single cases separated
 def naive_fun_2(transactions_string):
 
   transactions = pd.eval(transactions_string)
@@ -267,7 +331,7 @@ def naive_fun_2(transactions_string):
         tuples_4[tuple4] += 1#/len(transactions)
   return(tuples_1.most_common(10), tuples_2.most_common(10), tuples_3.most_common(10), tuples_4.most_common(10))
 
-start_time = time.time()
+'''start_time = time.time()
 for i in range(1):
   #print(df_grouped['text_cleaned_tuple'].values[i])
   result = naive_fun_2(df_grouped['text_cleaned_tuple'].values[i])
@@ -275,7 +339,7 @@ for i in range(1):
   print("\n")
   #transactions_topics.append(result[1])
 print('Time to find frequent itemset')
-print("--- %s seconds ---" % (time.time() - start_time))
+print("--- %s seconds ---" % (time.time() - start_time))'''
 
 
 '''result = naive_fun_2([
