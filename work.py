@@ -275,8 +275,8 @@ def naive_fun(transactions_string):
   for key in dict_counters:
     dict_counters[key] = dict_counters[key].most_common(10)
     for el in dict_counters[key]:
-      print("EL", el)
-      dict_topic[el[0]] = el[1]
+      #print("EL", el)
+      dict_topic[el[0]] = (el[1], el[1]/len(transactions))
   #print(dict_topic)
   return dict_topic #dict_counters
 
@@ -287,11 +287,32 @@ for i in range(1):
   result = naive_fun(df_grouped['text_cleaned_tuple'].values[i])
   print("RESULT:", result)
   print("\n")
-  #dict_day_topic["day"+str(i)] = result
+  dict_day_topic["day"+str(i)] = result
 print(dict_day_topic)
 print('Time to find frequent itemset')
 print("--- %s seconds ---" % (time.time() - start_time))
 
+dict_topic_day_num = {}
+for day in dict_day_topic:
+  #print("D", day)
+  #print("E", dict_day_topic[day])
+  for topic in dict_day_topic[day]:
+    #print("Q", topic)
+    if not (topic in dict_topic_day_num):
+      count = 0
+      list_day = []
+      list_num = []
+      #print("EEEEEEE", dict_day_topic[day].keys())
+      for day in dict_day_topic:
+        list_day.append(day)
+        if topic in dict_day_topic[day].keys():
+          count += 1
+          list_num.append(dict_day_topic[day][topic][0])
+          #print("DDDDDDDD", dict_day_topic[day][topic])
+        else:
+          list_num.append(0)
+      dict_topic_day_num[topic] = (count, list_day, list_num)
+print(dict_topic_day_num)
 
 '''start_time = time.time()
 for i in range(1):
