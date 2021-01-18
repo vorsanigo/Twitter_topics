@@ -11,7 +11,8 @@ import itertools
 import matplotlib
 import matplotlib.pyplot as plt
 
-# TODO tenere anche singleton?
+# TODO tenere anche singleton? 2 opzioni:
+# TODO usare le association rules / modificare codice e tenere solo se non singleton
 
 # TODO considerare le association rules?
 
@@ -32,6 +33,9 @@ import matplotlib.pyplot as plt
 
 # TODO creare altri pickle file per fare esperimenti comodi
 
+# TODO fare test utente
+
+# TODO calcolare tempi e prestazioni -> capire quando approccio apriori funziona bene
 
 
 # TODO CAPIRE PERCHE' ALCUNI ITEMSETS LI CONTA IN NUMERO != USANDO LE FZ != ------> forse ok
@@ -55,6 +59,10 @@ list_date = df_grouped['date_only'].tolist()
 
 column_dataframe = df_grouped['text_cleaned_tuple']
 
+# TODO decidere dove metterlo
+start_time = time.time()
+print('Time to find frequent itemset')
+print("--- %s seconds ---" % (time.time() - start_time))
 
 #print(df_grouped['text_cleaned_tuple'][0])
 '''df.drop([])
@@ -106,12 +114,14 @@ def eff_apriori_fun(transactions_string): # , min_sup, min_conf, min_len, min_li
   dict_topic = {}
   for key in itemsets:
     for el in itemsets[key]:
-      dict_topic[el] = itemsets[key][el], itemsets[key][el]/len(transactions) # topic: (tot num, freq)
+      #if len(el) > 1: # TODO uncomment if we want itemsets only of length > 1
+      dict_topic[el] = itemsets[key][el]/len(transactions), itemsets[key][el] # topic: (freq, tot num)
 
   return dict_topic
 
 # In this version we consider the association rule as method to filter the results, so we only consider itemsets of 2
 # or more items and we consider only high correlation between the terms
+# TODO min_confidence: 0.6/0.7/0.8 forse le migliori ??
 def eff_apriori_rules_fun(transactions_string): # , min_sup, min_conf, min_len, min_lift, len_rule
   '''Given a transaction from the dataset (set of cleaned tweets of a single day), it returns a tuple containing the
   itemsets output from efficient-apriori, the list of itemsets, and the list with the support for each itemset
@@ -180,7 +190,7 @@ def naive_fun(transactions_string):
     dict_counters[key] = dict_counters[key].most_common(10)
     for el in dict_counters[key]:
       #print("EL", el)
-      dict_topic[el[0]] = (el[1], el[1]/len(transactions))
+      dict_topic[el[0]] = (el[1]/len(transactions), el[1])
   #print(dict_topic)
   return dict_topic #dict_counters
 
@@ -204,8 +214,8 @@ def apply_fun(name_fun, dimension, column_dataframe): # column_dataframe = df_gr
   return dict_day_topic
 
 # eff_apriori_fun
-'''apply_fun_res_1 = apply_fun('eff_apriori_fun', 3, column_dataframe)
-print("apply_fun_res_1", apply_fun_res_1)'''
+apply_fun_res_1 = apply_fun('eff_apriori_fun', 3, column_dataframe)
+print("apply_fun_res_1", apply_fun_res_1)
 # eff_apriori_rules_fun
 '''apply_fun_res_2 = apply_fun('eff_apriori_rules_fun', 3, column_dataframe)
 print(apply_fun_res_2)'''
@@ -245,6 +255,7 @@ print("\n")'''
 def create_dict_topics_also_singleton(dict_day_topic):
   dict_topic_day_num = {}
   dict_to_dataframe = {}
+  list_count = []
   for day in dict_day_topic:
     #print("D", day)
     #print("E", dict_day_topic[day])
@@ -261,9 +272,9 @@ def create_dict_topics_also_singleton(dict_day_topic):
           list_day.append(day)
           if topic in dict_day_topic[day].keys():
             count += 1
-            list_num.append(dict_day_topic[day][topic][0])
-            list_freq.append(dict_day_topic[day][topic][1]) # TODO NB unico punto che cambia fra questa funzione e create_dict_topics_tuple, se si inverte l'ordine nelle fz prec si può creare una sola
-            list_freq_dataset.append(dict_day_topic[day][topic][1]) # todo anche qui
+            list_num.append(dict_day_topic[day][topic][1])
+            list_freq.append(dict_day_topic[day][topic][0]) # TODO NB unico punto che cambia fra questa funzione e create_dict_topics_tuple, se si inverte l'ordine nelle fz prec si può creare una sola
+            list_freq_dataset.append(dict_day_topic[day][topic][0]) # todo anche qui
             #print("DDDDDDDD", dict_day_topic[day][topic])
           else:
             list_num.append("not freq")
@@ -271,28 +282,31 @@ def create_dict_topics_also_singleton(dict_day_topic):
             list_freq_dataset.append("")
         dict_topic_day_num[topic] = (count, list(zip(list_day, list_num, list_freq)))
         dict_to_dataframe[topic] = (list_freq_dataset)
-    return dict_topic_day_num, dict_to_dataframe
+        list_count.append(count)
+    return dict_topic_day_num, dict_to_dataframe, list_count
 
 '''create_dict_topics_also_singleton_res = create_dict_topics_also_singleton(apply_fun_res_1)
 print("create_dict_topics_also_singleton_res[0]", create_dict_topics_also_singleton_res[0])
-print("create_dict_topics_also_singleton_res[1]", create_dict_topics_also_singleton_res[1])'''
+print("create_dict_topics_also_singleton_res[1]", create_dict_topics_also_singleton_res[1])
+print("create_dict_topics_also_singleton_res[2]", create_dict_topics_also_singleton_res[2])
 
-'''print("DICT_TOPIC_DAY_NUM", dict_topic_day_num)
-dataframe = pd.DataFrame.from_dict(dict_to_dataframe, orient='index')
-print(dataframe)
+df_topics = pd.DataFrame.from_dict(create_dict_topics_also_singleton_res[1], orient='index', columns=list_date[:3])
+df_topics["Number of occurrences"] = create_dict_topics_also_singleton_res[2]
+print(df_topics)'''
 
 
 
   
 start_time = time.time()
 print('Time to find frequent itemset')
-print("--- %s seconds ---" % (time.time() - start_time))'''
+print("--- %s seconds ---" % (time.time() - start_time))
 
-
+# TODO QUESTA E' UGUALE A QUELLA SOPRA 1.0
 # TODO 1.1) da usare con eff_apriori_rules_fun (considera itemsets freq con dimensione > 1) e NON calcola freq di quelli non freq
 def create_dict_topics_tuple(dict_day_topic):
   dict_topic_day_num = {}
   dict_to_dataframe = {}
+  list_count = []
   for day in dict_day_topic:
     #print("D", day)
     #print("E", dict_day_topic[day])
@@ -309,7 +323,7 @@ def create_dict_topics_tuple(dict_day_topic):
           list_day.append(day)
           if topic in dict_day_topic[day].keys():
             count += 1
-            list_num.append(dict_day_topic[day][topic][0])
+            list_num.append(dict_day_topic[day][topic][1])
             list_freq.append(dict_day_topic[day][topic][0])
             list_freq_dataset.append(dict_day_topic[day][topic][0])
             #print("DDDDDDDD", dict_day_topic[day][topic])
@@ -319,12 +333,17 @@ def create_dict_topics_tuple(dict_day_topic):
             list_freq_dataset.append("")
         dict_topic_day_num[topic] = (count, list(zip(list_day, list_num, list_freq)))
         dict_to_dataframe[topic] = (list_freq_dataset)
-  return dict_topic_day_num, dict_to_dataframe
+        list_count.append(count)
+  return dict_topic_day_num, dict_to_dataframe, list_count
 
 '''create_dict_topics_tuple_res = create_dict_topics_tuple(apply_fun_res_2)
 print("create_dict_topics_tuple_res[0]", create_dict_topics_tuple_res[0])
-print("create_dict_topics_tuple[1]", create_dict_topics_tuple_res[1])'''
+print("create_dict_topics_tuple[1]", create_dict_topics_tuple_res[1])
+print("create_dict_topics_tuple_res[2]", create_dict_topics_tuple_res[2])
 
+df_topics = pd.DataFrame.from_dict(create_dict_topics_tuple_res[1], orient='index', columns=list_date[:3])
+df_topics["Number of occurrences"] = create_dict_topics_tuple_res[2]
+print(df_topics)'''
 
 
 '''print("DICT_TOPIC_DAY_NUM", dict_topic_day_num)
@@ -342,6 +361,7 @@ print(dataframe)'''
 def create_dict_topics_all_freq(dict_day_topic, column_dataframe):
   dict_topic_day_num = {}
   dict_to_dataframe = {}
+  list_count = []
   for day in dict_day_topic:
     #print("D", day)
     #print("E", dict_day_topic[day])
@@ -351,7 +371,7 @@ def create_dict_topics_all_freq(dict_day_topic, column_dataframe):
         pos = 0
         count = 0
         list_day = []
-        list_num = []
+        list_num = [] # TODO questa è list_confidence se si usa eff_apriori_rules_fun
         list_freq = []
         list_flag = []
         #print("EEEEEEE", dict_day_topic[day].keys())
@@ -359,8 +379,8 @@ def create_dict_topics_all_freq(dict_day_topic, column_dataframe):
           list_day.append(day)
           if topic in dict_day_topic[day].keys():
             count += 1
-            list_num.append(dict_day_topic[day][topic][0])
-            list_freq.append(dict_day_topic[day][topic][1])
+            list_num.append(dict_day_topic[day][topic][1]) # TODO questa è list_confidence se si usa eff_apriori_rules_fun
+            list_freq.append(dict_day_topic[day][topic][0])
             list_flag.append('freq')
             #print("DDDDDDDD", dict_day_topic[day][topic])
           else:
@@ -373,19 +393,31 @@ def create_dict_topics_all_freq(dict_day_topic, column_dataframe):
             #list_num.append("not freq")
             #list_freq.append("not freq")
           pos += 1
-        dict_topic_day_num[topic] = (count, list(zip(list_day, list_num, list_freq, list_flag)))
+        dict_topic_day_num[topic] = (count, list(zip(list_day, list_num, list_freq, list_flag))) # TODO list_num è list_confidence se si usa eff_apriori_rules_fun
         dict_to_dataframe[topic] = (list_freq)
+        list_count.append(count)
         #print("DICT TOPIC DAY NUM", dict_topic_day_num)
-  return dict_topic_day_num, dict_to_dataframe
+  return dict_topic_day_num, dict_to_dataframe, list_count
 
 # with eff_apriori_fun
-'''create_dict_topics_all_freq_res = create_dict_topics_all_freq(apply_fun_res_1, column_dataframe)
+create_dict_topics_all_freq_res = create_dict_topics_all_freq(apply_fun_res_1, column_dataframe)
 print("create_dict_topics_all_freq_res[0]", create_dict_topics_all_freq_res[0])
-print("create_dict_topics_all_freq_res[1]", create_dict_topics_all_freq_res[1])'''
+print("create_dict_topics_all_freq_res[1]", create_dict_topics_all_freq_res[1])
+print("create_dict_topics_all_freq_res[2]", create_dict_topics_all_freq_res[2])
+
+df_topics = pd.DataFrame.from_dict(create_dict_topics_all_freq_res[1], orient='index', columns=list_date[:3])
+df_topics["Number of occurrences"] = create_dict_topics_all_freq_res[2]
+print(df_topics)
+
 # with eff_apriori_rules_fun
 '''create_dict_topics_all_freq_res = create_dict_topics_all_freq(apply_fun_res_2, column_dataframe)
 print("create_dict_topics_all_freq_res[0]", create_dict_topics_all_freq_res[0])
-print("create_dict_topics_all_freq_res[1]", create_dict_topics_all_freq_res[1])'''
+print("create_dict_topics_all_freq_res[1]", create_dict_topics_all_freq_res[1])
+print("create_dict_topics_all_freq_res[2]", create_dict_topics_all_freq_res[2])
+
+df_topics = pd.DataFrame.from_dict(create_dict_topics_all_freq_res[1], orient='index', columns=list_date[:3])
+df_topics["Number of occurrences"] = create_dict_topics_all_freq_res[2]
+print(df_topics)'''
 
 # TODO example OUTPUT: dict_topic_day_num -> version 1
 # 2 days -> day0, day1
