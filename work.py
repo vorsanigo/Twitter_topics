@@ -11,10 +11,32 @@ import itertools
 import matplotlib
 import matplotlib.pyplot as plt
 
+# TODO tenere anche singleton?
+
+# TODO considerare le association rules?
+
+# TODO threshold è ok così basso? fare test con anche un poco più alto, ma si perdono cose
+
+# TODO confrontare prestazioni naive e apriori -> minor numero di comparazioni, usa threshold invece di top-k (???), se
+# TODO si dovessero guardare tutte le possibili combinazioni con naive necessiterebbe troppo tempo, ci fermiamo a length = 4
+
+# TODO scegliere altri dataset (sottoinsieme? altri?)
+
+# TODO capire perché teniamo anche le parole molto frequenti -> la correlazione con gli altri non è casuale in questo modo?
+# TODO oppure no perché anche se frequenti sempre nel periodo sono importanti, dato che se troviamo putin insieme a covid significa che
+# TODO il topic riguarda sia covid che putin
+
+# TODO capire se tenere tutte le frequenze per fare i grafici
+
+# TODO scegliere quali grafici fare, quali topic tenere
+
+# TODO creare altri pickle file per fare esperimenti comodi
+
+
+
 # TODO CAPIRE PERCHE' ALCUNI ITEMSETS LI CONTA IN NUMERO != USANDO LE FZ != ------> forse ok
 # TODO RAGGRUPPARE PER DATA I TOPIC FREQUENTI COME FATTO PER EFFICIENT APRIORI ----> ok manca solo per mlx apriori
-# TODO PLOTTARE I TOPIC IMPORTANTI -> COME LI SCEGLIAMO ???????????
-# TODO CREATE NEW PICKLES WITH EFF APRIORI AND NAIVE
+
 
 
 # Here we apply the efficient-apriori on the cleaned tweets for each day separately to find, for each day, the frequent
@@ -122,7 +144,6 @@ def eff_apriori_rules_fun(transactions_string): # , min_sup, min_conf, min_len, 
       dict_topic[el] = itemsets[key][el], itemsets[key][el]/len(transactions) # topic: (tot num, freq)
   '''
   return dict_topic
-# todo correct one
 
 
 
