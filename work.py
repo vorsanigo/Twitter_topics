@@ -60,9 +60,9 @@ list_date = df_grouped['date_only'].tolist()
 column_dataframe = df_grouped['text_cleaned_tuple']
 
 # TODO decidere dove metterlo
-start_time = time.time()
+'''start_time = time.time()
 print('Time to find frequent itemset')
-print("--- %s seconds ---" % (time.time() - start_time))
+print("--- %s seconds ---" % (time.time() - start_time))'''
 
 #print(df_grouped['text_cleaned_tuple'][0])
 '''df.drop([])
@@ -93,16 +93,16 @@ def eff_apriori_fun(transactions_string): # , min_sup, min_conf, min_len, min_li
   -> (dict, list, list)'''
 
   transactions = pd.eval(transactions_string)
-  print(len(transactions))
+  #print(len(transactions))
   #transactions = transactions_string
   itemsets, rules = apriori(transactions, min_support=0.03, min_confidence=0.7) # , output_transaction_ids=True
-  for rule in rules:
-    print(rule)
+  #for rule in rules:
+    #print(rule)
     #print(rule.rhs + rule.lhs)
   '''rules_rhs = filter(lambda rule: len(rule.lhs) == 2 and len(rule.rhs) == 1, rules)
   for rule in sorted(rules_rhs, key=lambda rule: rule.lift):
     print(rule)  # Prints the rule and its confidence, support, lift, ...'''
-  print(itemsets)
+  #print(itemsets)
 
   '''list_itemsets = []
   list_freq = []
@@ -174,7 +174,7 @@ def naive_fun(transactions_string):
       #continue
     sub.sort()
     #for i in range(len(sub)): # TODO così non funzionaaaaa perché ci sono troppe combinazioni
-    for i in range(4):
+    for i in range(1,4): # put range(1, 4) if we want without singletons
       #print(i)
       if not (i+1 in dict_counters.keys()):
         dict_counters[i+1] = Counter()
@@ -184,12 +184,14 @@ def naive_fun(transactions_string):
             dict_count[el] = 1 / len(transactions)
           else:'''
           #print(dict_counters[i+1])
-          dict_counters[i+1][el] += 1 #/ len(transactions)
+          dict_counters[i+1][tuple(sorted(el))] += 1 #/ len(transactions) #TODO#########################################################
   dict_topic = {}
   for key in dict_counters:
     dict_counters[key] = dict_counters[key].most_common(10)
+    c = 0
     for el in dict_counters[key]:
-      #print("EL", el)
+      c += 1
+      print("EL", el, " ", c)
       dict_topic[el[0]] = (el[1]/len(transactions), el[1])
   #print(dict_topic)
   return dict_topic #dict_counters
@@ -206,22 +208,13 @@ def apply_fun(name_fun, dimension, column_dataframe): # column_dataframe = df_gr
       result = eff_apriori_rules_fun(column_dataframe.values[i])
     else:
       result = naive_fun(column_dataframe.values[i])
-    print("RESULT:", result)
-    print("\n")
+    #print("RESULT:", result)
+    #print("\n")
     dict_day_topic["day" + str(i)] = result
-  print("\n\n\n")
-  print("DICT DAY TOPIC", dict_day_topic)
+  #print("\n\n\n")
+  #print("DICT DAY TOPIC", dict_day_topic)
   return dict_day_topic
 
-# eff_apriori_fun
-apply_fun_res_1 = apply_fun('eff_apriori_fun', 3, column_dataframe)
-print("apply_fun_res_1", apply_fun_res_1)
-# eff_apriori_rules_fun
-'''apply_fun_res_2 = apply_fun('eff_apriori_rules_fun', 3, column_dataframe)
-print(apply_fun_res_2)'''
-# naive_fun
-'''apply_fun_res_3 = apply_fun('naive_fun', 3, column_dataframe)
-print(apply_fun_res_3)'''
 
 def count_itemset(tuple_topic, transactions): # da fare nel day in cui manca la freq
   counter = 0
@@ -273,8 +266,8 @@ def create_dict_topics_also_singleton(dict_day_topic):
           if topic in dict_day_topic[day].keys():
             count += 1
             list_num.append(dict_day_topic[day][topic][1])
-            list_freq.append(dict_day_topic[day][topic][0]) # TODO NB unico punto che cambia fra questa funzione e create_dict_topics_tuple, se si inverte l'ordine nelle fz prec si può creare una sola
-            list_freq_dataset.append(dict_day_topic[day][topic][0]) # todo anche qui
+            list_freq.append(dict_day_topic[day][topic][0])
+            list_freq_dataset.append(dict_day_topic[day][topic][0])
             #print("DDDDDDDD", dict_day_topic[day][topic])
           else:
             list_num.append("not freq")
@@ -283,23 +276,101 @@ def create_dict_topics_also_singleton(dict_day_topic):
         dict_topic_day_num[topic] = (count, list(zip(list_day, list_num, list_freq)))
         dict_to_dataframe[topic] = (list_freq_dataset)
         list_count.append(count)
-    return dict_topic_day_num, dict_to_dataframe, list_count
+  return dict_topic_day_num, dict_to_dataframe, list_count
 
-'''create_dict_topics_also_singleton_res = create_dict_topics_also_singleton(apply_fun_res_1)
+# eff_apriori_fun with also singleton and computing frequences only of frequent topics
+'''start_time = time.time()
+
+apply_fun_res_1 = apply_fun('eff_apriori_fun', 25, column_dataframe)
+#print("apply_fun_res_1", apply_fun_res_1)
+print(len(apply_fun_res_1.keys()))
+create_dict_topics_also_singleton_res = create_dict_topics_also_singleton(apply_fun_res_1)
 print("create_dict_topics_also_singleton_res[0]", create_dict_topics_also_singleton_res[0])
 print("create_dict_topics_also_singleton_res[1]", create_dict_topics_also_singleton_res[1])
 print("create_dict_topics_also_singleton_res[2]", create_dict_topics_also_singleton_res[2])
 
-df_topics = pd.DataFrame.from_dict(create_dict_topics_also_singleton_res[1], orient='index', columns=list_date[:3])
+df_topics = pd.DataFrame.from_dict(create_dict_topics_also_singleton_res[1], orient='index', columns=list_date[:25])
 df_topics["Number of occurrences"] = create_dict_topics_also_singleton_res[2]
-print(df_topics)'''
+#print(df_topics)
 
-
-
-  
-start_time = time.time()
 print('Time to find frequent itemset')
-print("--- %s seconds ---" % (time.time() - start_time))
+time_eff_apriori = time.time() - start_time
+print("--- %s seconds ---" % time_eff_apriori)
+'''
+
+# save the result dictionary dict_topic_day_num
+'''file1 = open('pickle_eff_apriori_fun_normal', 'wb')
+pickle.dump(create_dict_topics_also_singleton_res[0], file1)
+file1.close()
+
+# save the dataframe with frequences
+df_topics.to_csv(r'/home/veror/PycharmProjects/DataMiningProj_OK/res_eff_apriori_fun_normal.csv')
+
+file1 = open('pickle_time_eff_apriori_fun_normal', 'wb')
+pickle.dump(time_eff_apriori, file1)
+file1.close()'''
+
+# read the outputs
+'''# read the dictionary dict_topic_day_num
+file1 = open('pickle_eff_apriori_fun_normal', 'rb')
+pickle_eff_apriori = pickle.load(file1)
+print(pickle_eff_apriori)
+
+# read the dictionary dict_topic_day_num
+file2 = open('pickle_time_eff_apriori_fun_normal', 'rb')
+pickle_time_eff_apriori = pickle.load(file2)
+print(pickle_time_eff_apriori)
+
+# read the dataset of frequences
+df_eff_apriori = pd.read_csv("/home/veror/PycharmProjects/DataMiningProj_OK/res_eff_apriori_fun_normal.csv", )
+print(df_eff_apriori)'''
+
+
+# naive_fun with also singleton and computing frequences only of frequent topics
+start_time = time.time()
+
+apply_fun_res_3 = apply_fun('naive_fun', 7, column_dataframe)
+print(apply_fun_res_3)
+
+create_dict_topics_also_singleton_res = create_dict_topics_also_singleton(apply_fun_res_3)
+print("create_dict_topics_also_singleton_res[0]", create_dict_topics_also_singleton_res[0])
+print("create_dict_topics_also_singleton_res[1]", create_dict_topics_also_singleton_res[1])
+print("create_dict_topics_also_singleton_res[2]", create_dict_topics_also_singleton_res[2])
+
+# save the result dictionary dict_topic_day_num
+file1 = open('pickle_naive_fun_normal', 'wb')
+pickle.dump(create_dict_topics_also_singleton_res[0], file1)
+file1.close()
+
+df_topics = pd.DataFrame.from_dict(create_dict_topics_also_singleton_res[1], orient='index', columns=list_date[:7])
+df_topics["Number of occurrences"] = create_dict_topics_also_singleton_res[2]
+print(df_topics)
+
+df_topics.to_csv(r'/home/veror/PycharmProjects/DataMiningProj_OK/res_naive_fun_normal.csv')
+
+print('Time to find frequent itemset')
+time_naive = time.time() - start_time
+print("--- %s seconds ---" % time_naive)
+
+file1 = open('pickle_time_naive_fun_normal', 'wb')
+pickle.dump(time_naive, file1)
+file1.close()
+
+# read the outputs
+'''# read the dictionary dict_topic_day_num
+file1 = open('pickle_eff_apriori_fun_normal', 'rb')
+pickle_eff_apriori = pickle.load(file1)
+print(pickle_eff_apriori)
+
+# read the dictionary dict_topic_day_num
+file2 = open('pickle_time_eff_apriori_fun_normal', 'rb')
+pickle_time_eff_apriori = pickle.load(file2)
+print(pickle_time_eff_apriori)
+
+# read the dataset of frequences
+df_eff_apriori = pd.read_csv("/home/veror/PycharmProjects/DataMiningProj_OK/res_eff_apriori_fun_normal.csv", )
+print(df_eff_apriori)'''
+
 
 # TODO QUESTA E' UGUALE A QUELLA SOPRA 1.0
 # TODO 1.1) da usare con eff_apriori_rules_fun (considera itemsets freq con dimensione > 1) e NON calcola freq di quelli non freq
@@ -335,6 +406,10 @@ def create_dict_topics_tuple(dict_day_topic):
         dict_to_dataframe[topic] = (list_freq_dataset)
         list_count.append(count)
   return dict_topic_day_num, dict_to_dataframe, list_count
+
+# eff_apriori_rules_fun
+'''apply_fun_res_2 = apply_fun('eff_apriori_rules_fun', 3, column_dataframe)
+print(apply_fun_res_2)'''
 
 '''create_dict_topics_tuple_res = create_dict_topics_tuple(apply_fun_res_2)
 print("create_dict_topics_tuple_res[0]", create_dict_topics_tuple_res[0])
@@ -399,15 +474,15 @@ def create_dict_topics_all_freq(dict_day_topic, column_dataframe):
         #print("DICT TOPIC DAY NUM", dict_topic_day_num)
   return dict_topic_day_num, dict_to_dataframe, list_count
 
-# with eff_apriori_fun
-create_dict_topics_all_freq_res = create_dict_topics_all_freq(apply_fun_res_1, column_dataframe)
+# with eff_apriori_fun'''
+'''create_dict_topics_all_freq_res = create_dict_topics_all_freq(apply_fun_res_1, column_dataframe)
 print("create_dict_topics_all_freq_res[0]", create_dict_topics_all_freq_res[0])
 print("create_dict_topics_all_freq_res[1]", create_dict_topics_all_freq_res[1])
 print("create_dict_topics_all_freq_res[2]", create_dict_topics_all_freq_res[2])
 
 df_topics = pd.DataFrame.from_dict(create_dict_topics_all_freq_res[1], orient='index', columns=list_date[:3])
 df_topics["Number of occurrences"] = create_dict_topics_all_freq_res[2]
-print(df_topics)
+print(df_topics)'''
 
 # with eff_apriori_rules_fun
 '''create_dict_topics_all_freq_res = create_dict_topics_all_freq(apply_fun_res_2, column_dataframe)
