@@ -10,6 +10,9 @@ from itertools import combinations
 import itertools
 import matplotlib
 import matplotlib.pyplot as plt
+from itertools import dropwhile
+
+# TODO FARE RUN CON NAIVE FREQ E POSSIBILI ALTRE
 
 # TODO tenere anche singleton? 2 opzioni:
 # TODO usare le association rules / modificare codice e tenere solo se non singleton
@@ -47,7 +50,26 @@ import matplotlib.pyplot as plt
 # topics, given by the frequent itemsets of terms, then we check the frequence of each of them on the total number of days
 
 # read cleaned dataframe -> not useful
-df = pd.read_csv("/home/veror/PycharmProjects/DataMiningProj_OK/DATASET_covid19_tweets_cleaned_OK.csv", sep=' ')
+'''df_1 = pd.read_csv("/home/veror/PycharmProjects/DataMiningProj_OK/res_naive_fun_normal.csv", sep=',')
+print(df_1)
+x = sorted(list(df_1. iloc[:, 0]))
+
+df_2 = pd.read_csv("/home/veror/PycharmProjects/DataMiningProj_OK/res_naive_fun_normal_1111111111.csv", sep=',')
+print(df_2)
+y = sorted(list(df_2. iloc[:, 0]))
+
+print("164", x)
+print("165", y)
+
+main_list = list(set(x) - set(y))
+main_list_1 = list(set(y) - set(x))
+
+print("si 164 no 165", main_list)
+print(len(main_list))
+print("si 165 no 164", main_list_1)
+print((len(main_list_1)))
+'''
+
 #print(df)
 print("----------------------")
 
@@ -58,6 +80,9 @@ print("----------------------")
 list_date = df_grouped['date_only'].tolist()
 
 column_dataframe = df_grouped['text_cleaned_tuple']
+
+
+
 
 # TODO decidere dove metterlo
 '''start_time = time.time()
@@ -164,10 +189,10 @@ def naive_fun(transactions_string):
   #transactions = transactions_string
   print(len(transactions))
   dict_counters = {}
-  '''tuples_1 = Counter()
-  tuples_2 = Counter()
-  tuples_3 = Counter()
-  tuples_4 = Counter()'''
+  #tuples_1 = Counter()
+  #tuples_2 = Counter()
+  #tuples_3 = Counter()
+  #tuples_4 = Counter()
   #dict_counters[1] = Counter()
   for sub in transactions:
     #if len(transactions) < 2:
@@ -180,22 +205,69 @@ def naive_fun(transactions_string):
         dict_counters[i+1] = Counter()
       for el in combinations(set(sub), i+1):
         if len(el) == len(set(el)):
-          '''if not (el in dict_count.keys()):
-            dict_count[el] = 1 / len(transactions)
-          else:'''
+          #if not (el in dict_count.keys()):
+            #dict_count[el] = 1 / len(transactions)
+          #else:
           #print(dict_counters[i+1])
           dict_counters[i+1][tuple(sorted(el))] += 1 #/ len(transactions) #TODO#########################################################
   dict_topic = {}
   for key in dict_counters:
+    print("ECCOLO", dict_counters[key].most_common(20))
     dict_counters[key] = dict_counters[key].most_common(10)
-    c = 0
+    #c = 0
     for el in dict_counters[key]:
-      c += 1
-      print("EL", el, " ", c)
+      #c += 1
+      #print("EL", el, " ", c)
       dict_topic[el[0]] = (el[1]/len(transactions), el[1])
   #print(dict_topic)
   return dict_topic #dict_counters
 
+
+def naive_fun_freq(transactions_string):
+
+  transactions = pd.eval(transactions_string)
+  #transactions = transactions_string
+  print(len(transactions))
+  dict_counters = {}
+  #tuples_1 = Counter()
+  #tuples_2 = Counter()
+  #tuples_3 = Counter()
+  #tuples_4 = Counter()
+  #dict_counters[1] = Counter()
+  for sub in transactions:
+    #if len(transactions) < 2:
+      #continue
+    sub.sort()
+    #for i in range(len(sub)): # TODO così non funzionaaaaa perché ci sono troppe combinazioni
+    for i in range(1,4): # put range(1, 4) if we want without singletons
+      #print(i)
+      if not (i+1 in dict_counters.keys()):
+        dict_counters[i+1] = Counter()
+      for el in combinations(set(sub), i+1):
+        if len(el) == len(set(el)):
+          #if not (el in dict_count.keys()):
+            #dict_count[el] = 1 / len(transactions)
+          #else:
+          #print(dict_counters[i+1])
+          dict_counters[i+1][tuple(sorted(el))] += 1 / len(transactions) #TODO#########################################################
+  dict_topic = {}
+  #print(dict_counters)
+  #print("-----------------------------------\n\n")
+  for key in dict_counters:
+    for k, count in dropwhile(lambda key_count: key_count[1] >= 0.01, dict_counters[key].most_common()):
+      del dict_counters[key][k]
+    #print("ECCOLO", dict_counters[key])
+    #print(dict_counters[key])
+    dict_counters[key] = dict_counters[key].most_common()
+    #c = 0
+    for el in dict_counters[key]:
+      #print("EL", el, " ", el[1])
+      #c += 1
+      #print("EL", el, " ", c)
+      dict_topic[el[0]] = (el[1], el[1]*len(transactions))
+  #print(dict_topic)
+  print(dict_counters)
+  return dict_topic #dict_counters
 
 
 def apply_fun(name_fun, dimension, column_dataframe): # column_dataframe = df_grouped['text_cleaned_tuple']
@@ -206,13 +278,15 @@ def apply_fun(name_fun, dimension, column_dataframe): # column_dataframe = df_gr
       result = eff_apriori_fun(column_dataframe.values[i])
     elif name_fun == "eff_apriori_rules_fun":
       result = eff_apriori_rules_fun(column_dataframe.values[i])
+    elif name_fun == "naive_fun_freq":
+      result = naive_fun_freq(column_dataframe.values[i])
     else:
       result = naive_fun(column_dataframe.values[i])
-    #print("RESULT:", result)
+    print("RESULT:", result)
     #print("\n")
     dict_day_topic["day" + str(i)] = result
   #print("\n\n\n")
-  #print("DICT DAY TOPIC", dict_day_topic)
+  print("DICT DAY TOPIC", dict_day_topic)
   return dict_day_topic
 
 
@@ -329,7 +403,7 @@ print(df_eff_apriori)'''
 # naive_fun with also singleton and computing frequences only of frequent topics
 start_time = time.time()
 
-apply_fun_res_3 = apply_fun('naive_fun', 7, column_dataframe)
+apply_fun_res_3 = apply_fun('naive_fun', 3, column_dataframe)
 print(apply_fun_res_3)
 
 create_dict_topics_also_singleton_res = create_dict_topics_also_singleton(apply_fun_res_3)
@@ -342,7 +416,7 @@ file1 = open('pickle_naive_fun_normal', 'wb')
 pickle.dump(create_dict_topics_also_singleton_res[0], file1)
 file1.close()
 
-df_topics = pd.DataFrame.from_dict(create_dict_topics_also_singleton_res[1], orient='index', columns=list_date[:7])
+df_topics = pd.DataFrame.from_dict(create_dict_topics_also_singleton_res[1], orient='index', columns=list_date[:3])
 df_topics["Number of occurrences"] = create_dict_topics_also_singleton_res[2]
 print(df_topics)
 
