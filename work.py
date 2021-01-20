@@ -12,6 +12,12 @@ import matplotlib
 import matplotlib.pyplot as plt
 from itertools import dropwhile
 
+# TODO input utente: numero di topic restituiti, magari lunghezza topic
+
+# TODO sistemare funzioni mettendo variabili come parametri (es: lunghezza lista delle date)
+
+# TODO sistemare e mettere tutte le cose in ordine
+
 # TODO FARE RUN CON TUTTE LE FREQUENZE PER FARE GRAFICI
 
 # TODO tenere anche singleton? 2 opzioni:
@@ -74,14 +80,20 @@ print((len(main_list_1)))
 print("----------------------")
 
 # read dataframe grouped by day
-df_grouped = pd.read_csv("/home/veror/PycharmProjects/DataMiningProj_OK/DATASET_covid19_group_tuple.csv", sep=' ')
+'''df_grouped = pd.read_csv("/home/veror/PycharmProjects/DataMiningProj_OK/DATASET_covid19_group_tuple.csv", sep=' ')
 #print(dff)
 print("----------------------")
 list_date = df_grouped['date_only'].tolist()
 
+column_dataframe = df_grouped['text_cleaned_tuple']'''
+
+df_grouped = pd.read_csv("/home/veror/PycharmProjects/DataMiningProj_OK/DATASET_AUSTRALIA_group_tuple.csv", sep=' ')
+#print(dff)
+print("----------------------")
+list_date = df_grouped['date_only'].tolist()
+print(list_date)
+print(len(list_date))
 column_dataframe = df_grouped['text_cleaned_tuple']
-
-
 
 
 # TODO decidere dove metterlo
@@ -357,7 +369,7 @@ def create_dict_topics_also_singleton(dict_day_topic):
 # EFF_ARIORI_FUN with also singleton and computing frequences only of frequent topics
 start_time = time.time()
 
-apply_fun_res_1 = apply_fun('eff_apriori_fun', 25, column_dataframe)
+apply_fun_res_1 = apply_fun('eff_apriori_fun', 11, column_dataframe)
 #print("apply_fun_res_1", apply_fun_res_1)
 print(len(apply_fun_res_1.keys()))
 create_dict_topics_also_singleton_res = create_dict_topics_also_singleton(apply_fun_res_1)
@@ -365,7 +377,7 @@ print("create_dict_topics_also_singleton_res[0]", create_dict_topics_also_single
 print("create_dict_topics_also_singleton_res[1]", create_dict_topics_also_singleton_res[1])
 print("create_dict_topics_also_singleton_res[2]", create_dict_topics_also_singleton_res[2])
 
-df_topics = pd.DataFrame.from_dict(create_dict_topics_also_singleton_res[1], orient='index', columns=list_date[:25])
+df_topics = pd.DataFrame.from_dict(create_dict_topics_also_singleton_res[1], orient='index', columns=list_date[:11])
 df_topics["Number of occurrences"] = create_dict_topics_also_singleton_res[2]
 #print(df_topics)
 
@@ -375,14 +387,14 @@ print("--- %s seconds ---" % time_eff_apriori)
 
 
 # save the result dictionary dict_topic_day_num
-file1 = open('pickle_eff_apriori_fun_normal', 'wb')
+file1 = open('pickle_eff_apriori_fun_normal_AUSTRALIA', 'wb')
 pickle.dump(create_dict_topics_also_singleton_res[0], file1)
 file1.close()
 
 # save the dataframe with frequences
-df_topics.to_csv(r'/home/veror/PycharmProjects/DataMiningProj_OK/res_eff_apriori_fun_normal.csv')
+df_topics.to_csv(r'/home/veror/PycharmProjects/DataMiningProj_OK/res_eff_apriori_fun_normal_AUSTRALIA.csv')
 
-file1 = open('pickle_time_eff_apriori_fun_normal', 'wb')
+file1 = open('pickle_time_eff_apriori_fun_normal_AUSTRALIA', 'wb')
 pickle.dump(time_eff_apriori, file1)
 file1.close()
 
