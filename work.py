@@ -120,7 +120,7 @@ def eff_apriori_fun(transactions_string): # , min_sup, min_conf, min_len, min_li
   transactions = pd.eval(transactions_string)
   #print(len(transactions))
   #transactions = transactions_string
-  itemsets, rules = apriori(transactions, min_support=0.04, min_confidence=0.7) # , output_transaction_ids=True
+  itemsets, rules = apriori(transactions, min_support=0.03, min_confidence=0.7) # , output_transaction_ids=True
   #for rule in rules:
     #print(rule)
     #print(rule.rhs + rule.lhs)
