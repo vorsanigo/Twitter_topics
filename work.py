@@ -12,7 +12,7 @@ import matplotlib
 import matplotlib.pyplot as plt
 from itertools import dropwhile
 
-# TODO FARE RUN CON NAIVE FREQ E POSSIBILI ALTRE
+# TODO FARE RUN CON TUTTE LE FREQUENZE PER FARE GRAFICI
 
 # TODO tenere anche singleton? 2 opzioni:
 # TODO usare le association rules / modificare codice e tenere solo se non singleton
@@ -139,8 +139,8 @@ def eff_apriori_fun(transactions_string): # , min_sup, min_conf, min_len, min_li
   dict_topic = {}
   for key in itemsets:
     for el in itemsets[key]:
-      #if len(el) > 1: # TODO uncomment if we want itemsets only of length > 1
-      dict_topic[el] = itemsets[key][el]/len(transactions), itemsets[key][el] # topic: (freq, tot num)
+      if len(el) > 1: # TODO uncomment if we want itemsets only of length > 1
+        dict_topic[el] = itemsets[key][el]/len(transactions), itemsets[key][el] # topic: (freq, tot num)
 
   return dict_topic
 
@@ -199,7 +199,7 @@ def naive_fun(transactions_string):
       #continue
     sub.sort()
     #for i in range(len(sub)): # TODO così non funzionaaaaa perché ci sono troppe combinazioni
-    for i in range(1,4): # put range(1, 4) if we want without singletons
+    for i in range(1, 4): # put range(1, 4) if we want without singletons
       #print(i)
       if not (i+1 in dict_counters.keys()):
         dict_counters[i+1] = Counter()
@@ -212,7 +212,7 @@ def naive_fun(transactions_string):
           dict_counters[i+1][tuple(sorted(el))] += 1 #/ len(transactions) #TODO#########################################################
   dict_topic = {}
   for key in dict_counters:
-    print("ECCOLO", dict_counters[key].most_common(20))
+    #print("ECCOLO", dict_counters[key].most_common(20))
     dict_counters[key] = dict_counters[key].most_common(10)
     #c = 0
     for el in dict_counters[key]:
@@ -239,7 +239,7 @@ def naive_fun_freq(transactions_string):
       #continue
     sub.sort()
     #for i in range(len(sub)): # TODO così non funzionaaaaa perché ci sono troppe combinazioni
-    for i in range(1,4): # put range(1, 4) if we want without singletons
+    for i in range(1, 4): # put range(1, 4) if we want without singletons
       #print(i)
       if not (i+1 in dict_counters.keys()):
         dict_counters[i+1] = Counter()
@@ -249,12 +249,12 @@ def naive_fun_freq(transactions_string):
             #dict_count[el] = 1 / len(transactions)
           #else:
           #print(dict_counters[i+1])
-          dict_counters[i+1][tuple(sorted(el))] += 1 / len(transactions) #TODO#########################################################
+          dict_counters[i+1][tuple(sorted(el))] += 1 / len(transactions) #TODO NB: non si può mettere /len(transactions alla fine perché ci derve la freq in riga 357
   dict_topic = {}
   #print(dict_counters)
   #print("-----------------------------------\n\n")
   for key in dict_counters:
-    for k, count in dropwhile(lambda key_count: key_count[1] >= 0.01, dict_counters[key].most_common()):
+    for k, count in dropwhile(lambda key_count: key_count[1] >= 0.03, dict_counters[key].most_common()):
       del dict_counters[key][k]
     #print("ECCOLO", dict_counters[key])
     #print(dict_counters[key])
@@ -264,7 +264,7 @@ def naive_fun_freq(transactions_string):
       #print("EL", el, " ", el[1])
       #c += 1
       #print("EL", el, " ", c)
-      dict_topic[el[0]] = (el[1], el[1]*len(transactions))
+      dict_topic[el[0]] = (el[1], round(el[1]*len(transactions)))
   #print(dict_topic)
   print(dict_counters)
   return dict_topic #dict_counters
@@ -352,7 +352,9 @@ def create_dict_topics_also_singleton(dict_day_topic):
         list_count.append(count)
   return dict_topic_day_num, dict_to_dataframe, list_count
 
-# eff_apriori_fun with also singleton and computing frequences only of frequent topics
+#######################################################################################################################
+#ALSO SINGLETON
+# EFF_ARIORI_FUN with also singleton and computing frequences only of frequent topics
 '''start_time = time.time()
 
 apply_fun_res_1 = apply_fun('eff_apriori_fun', 25, column_dataframe)
@@ -385,25 +387,219 @@ pickle.dump(time_eff_apriori, file1)
 file1.close()'''
 
 # read the outputs
-'''# read the dictionary dict_topic_day_num
-file1 = open('pickle_eff_apriori_fun_normal', 'rb')
+# read the dictionary dict_topic_day_num
+'''file1 = open('/home/veror/PycharmProjects/DataMiningProj_OK/res_EFF_APRIORI_NORMAL/pickle_eff_apriori_fun_normal', 'rb')
 pickle_eff_apriori = pickle.load(file1)
 print(pickle_eff_apriori)
 
 # read the dictionary dict_topic_day_num
-file2 = open('pickle_time_eff_apriori_fun_normal', 'rb')
+file2 = open('/home/veror/PycharmProjects/DataMiningProj_OK/res_EFF_APRIORI_NORMAL/pickle_time_eff_apriori_fun_normal', 'rb')
 pickle_time_eff_apriori = pickle.load(file2)
 print(pickle_time_eff_apriori)
 
 # read the dataset of frequences
-df_eff_apriori = pd.read_csv("/home/veror/PycharmProjects/DataMiningProj_OK/res_eff_apriori_fun_normal.csv", )
+df_eff_apriori = pd.read_csv("/home/veror/PycharmProjects/DataMiningProj_OK/res_EFF_APRIORI_NORMAL/res_eff_apriori_fun_normal.csv", )
 print(df_eff_apriori)'''
 
+#######################################################################################################################
+# ALSO SINGLETON
+# NAIVE_FUN_FREQ with also singleton and computing frequences only of frequent topics
+'''start_time = time.time()
 
-# naive_fun with also singleton and computing frequences only of frequent topics
-start_time = time.time()
+apply_fun_res_3 = apply_fun('naive_fun_freq', 25, column_dataframe)
+print(apply_fun_res_3)
 
-apply_fun_res_3 = apply_fun('naive_fun', 3, column_dataframe)
+create_dict_topics_also_singleton_res = create_dict_topics_also_singleton(apply_fun_res_3)
+print("create_dict_topics_also_singleton_res[0]", create_dict_topics_also_singleton_res[0])
+print("create_dict_topics_also_singleton_res[1]", create_dict_topics_also_singleton_res[1])
+print("create_dict_topics_also_singleton_res[2]", create_dict_topics_also_singleton_res[2])
+
+# save the result dictionary dict_topic_day_num
+file1 = open('pickle_naive_fun_freq_normal', 'wb')
+pickle.dump(create_dict_topics_also_singleton_res[0], file1)
+file1.close()
+
+df_topics = pd.DataFrame.from_dict(create_dict_topics_also_singleton_res[1], orient='index', columns=list_date[:25])
+df_topics["Number of occurrences"] = create_dict_topics_also_singleton_res[2]
+print(df_topics)
+
+df_topics.to_csv(r'/home/veror/PycharmProjects/DataMiningProj_OK/res_naive_fun_freq_normal.csv')
+
+print('Time to find frequent itemset')
+time_naive_freq = time.time() - start_time
+print("--- %s seconds ---" % time_naive_freq)
+
+file1 = open('pickle_time_naive_fun_freq_normal', 'wb')
+pickle.dump(time_naive_freq, file1)
+file1.close()'''
+
+# read the outputs
+# read the dictionary dict_topic_day_num
+'''file1 = open('/home/veror/PycharmProjects/DataMiningProj_OK/re_NAIVE_FREQ_NORMAL/pickle_naive_fun_freq_normal', 'rb')
+pickle_eff_apriori = pickle.load(file1)
+print(pickle_eff_apriori)
+
+# read the dictionary dict_topic_day_num
+file2 = open('/home/veror/PycharmProjects/DataMiningProj_OK/res_NAIVE_FREQ_NORMAL/pickle_time_naive_fun_freq_normal', 'rb')
+pickle_time_eff_apriori = pickle.load(file2)
+print(pickle_time_eff_apriori)
+
+# read the dataset of frequences
+df_eff_apriori = pd.read_csv("/home/veror/PycharmProjects/DataMiningProj_OK/res_NAIVE_FREQ_NORMAL/res_naive_fun_freq_normal.csv", )
+print(df_eff_apriori)'''
+
+#######################################################################################################################
+#NOT SINGLETON
+# EFF_ARIORI_FUN without singleton and computing frequences only of frequent topics
+'''start_time = time.time()
+
+apply_fun_res_1 = apply_fun('eff_apriori_fun', 25, column_dataframe)
+#print("apply_fun_res_1", apply_fun_res_1)
+print(len(apply_fun_res_1.keys()))
+create_dict_topics_also_singleton_res = create_dict_topics_also_singleton(apply_fun_res_1)
+print("create_dict_topics_also_singleton_res[0]", create_dict_topics_also_singleton_res[0])
+print("create_dict_topics_also_singleton_res[1]", create_dict_topics_also_singleton_res[1])
+print("create_dict_topics_also_singleton_res[2]", create_dict_topics_also_singleton_res[2])
+
+df_topics = pd.DataFrame.from_dict(create_dict_topics_also_singleton_res[1], orient='index', columns=list_date[:25])
+df_topics["Number of occurrences"] = create_dict_topics_also_singleton_res[2]
+#print(df_topics)
+
+print('Time to find frequent itemset')
+time_eff_apriori_not_singletons = time.time() - start_time
+print("--- %s seconds ---" % time_eff_apriori_not_singletons)'''
+
+
+# save the result dictionary dict_topic_day_num
+'''file1 = open('pickle_eff_apriori_fun_not_singletons', 'wb')
+pickle.dump(create_dict_topics_also_singleton_res[0], file1)
+file1.close()
+
+# save the dataframe with frequences
+df_topics.to_csv(r'/home/veror/PycharmProjects/DataMiningProj_OK/res_eff_apriori_fun_not_singletons.csv')
+
+file1 = open('pickle_time_eff_apriori_fun_not_singletons', 'wb')
+pickle.dump(time_eff_apriori_not_singletons, file1)
+file1.close()'''
+
+# read the outputs
+# read the dictionary dict_topic_day_num
+'''file1 = open('/home/veror/PycharmProjects/DataMiningProj_OK/res_EFF_APRIORI_NO_SINGLETONS/pickle_eff_apriori_fun_not_singletons', 'rb')
+pickle_eff_apriori = pickle.load(file1)
+print(pickle_eff_apriori)
+
+# read the dictionary dict_topic_day_num
+file2 = open('/home/veror/PycharmProjects/DataMiningProj_OK/res_EFF_APRIORI_NO_SINGLETONS/pickle_time_eff_apriori_fun_not_singletons', 'rb')
+pickle_time_eff_apriori = pickle.load(file2)
+print(pickle_time_eff_apriori)
+
+# read the dataset of frequences
+df_eff_apriori = pd.read_csv("/home/veror/PycharmProjects/DataMiningProj_OK/res_EFF_APRIORI_NO_SINGLETONS/res_eff_apriori_fun_not_singletons.csv", )
+print(df_eff_apriori)'''
+
+#######################################################################################################################
+# NOT SINGLETON
+# NAIVE_FUN_FREQ without singleton and computing frequences only of frequent topics
+'''start_time = time.time()
+
+apply_fun_res_3 = apply_fun('naive_fun_freq', 25, column_dataframe)
+print(apply_fun_res_3)
+
+create_dict_topics_also_singleton_res = create_dict_topics_also_singleton(apply_fun_res_3)
+print("create_dict_topics_also_singleton_res[0]", create_dict_topics_also_singleton_res[0])
+print("create_dict_topics_also_singleton_res[1]", create_dict_topics_also_singleton_res[1])
+print("create_dict_topics_also_singleton_res[2]", create_dict_topics_also_singleton_res[2])
+
+# save the result dictionary dict_topic_day_num
+file1 = open('pickle_naive_fun_freq_no_singletons', 'wb')
+pickle.dump(create_dict_topics_also_singleton_res[0], file1)
+file1.close()
+
+df_topics = pd.DataFrame.from_dict(create_dict_topics_also_singleton_res[1], orient='index', columns=list_date[:25])
+df_topics["Number of occurrences"] = create_dict_topics_also_singleton_res[2]
+print(df_topics)
+
+df_topics.to_csv(r'/home/veror/PycharmProjects/DataMiningProj_OK/res_naive_fun_freq_not_singletons.csv')
+
+print('Time to find frequent itemset')
+time_naive_freq = time.time() - start_time
+print("--- %s seconds ---" % time_naive_freq)
+
+file1 = open('pickle_time_naive_fun_freq_no_singletons', 'wb')
+pickle.dump(time_naive_freq, file1)
+file1.close()'''
+
+# read the outputs
+# read the dictionary dict_topic_day_num
+'''file1 = open('/home/veror/PycharmProjects/DataMiningProj_OK/res_NAIVE_FREQ_NO_SINGLETONS/pickle_naive_fun_freq_no_singletons', 'rb')
+pickle_eff_apriori = pickle.load(file1)
+print(pickle_eff_apriori)
+
+# read the dictionary dict_topic_day_num
+file2 = open('/home/veror/PycharmProjects/DataMiningProj_OK/res_NAIVE_FREQ_NO_SINGLETONS/pickle_time_naive_fun_freq_no_singletons', 'rb')
+pickle_time_eff_apriori = pickle.load(file2)
+print(pickle_time_eff_apriori)
+
+# read the dataset of frequences
+df_eff_apriori = pd.read_csv("/home/veror/PycharmProjects/DataMiningProj_OK/res_NAIVE_FREQ_NO_SINGLETONS/res_naive_fun_freq_not_singletons.csv", )
+print(df_eff_apriori)'''
+
+#######################################################################################################################
+#NOT SINGLETON, using ASSOCIATION RULES to decide which topics are important
+# EFF_ARIORI_RULES_FUN without singleton and computing frequences only of frequent topics
+
+'''start_time = time.time()
+
+apply_fun_res_1 = apply_fun('eff_apriori_rules_fun', 25, column_dataframe)
+#print("apply_fun_res_1", apply_fun_res_1)
+print(len(apply_fun_res_1.keys()))
+create_dict_topics_also_singleton_res = create_dict_topics_also_singleton(apply_fun_res_1)
+print("create_dict_topics_also_singleton_res[0]", create_dict_topics_also_singleton_res[0])
+print("create_dict_topics_also_singleton_res[1]", create_dict_topics_also_singleton_res[1])
+print("create_dict_topics_also_singleton_res[2]", create_dict_topics_also_singleton_res[2])
+
+df_topics = pd.DataFrame.from_dict(create_dict_topics_also_singleton_res[1], orient='index', columns=list_date[:25])
+df_topics["Number of occurrences"] = create_dict_topics_also_singleton_res[2]
+#print(df_topics)
+
+print('Time to find frequent itemset')
+time_eff_apriori_time_rules = time.time() - start_time
+print("--- %s seconds ---" % time_eff_apriori_time_rules)'''
+
+
+# save the result dictionary dict_topic_day_num
+'''file1 = open('pickle_eff_apriori_rules', 'wb')
+pickle.dump(create_dict_topics_also_singleton_res[0], file1)
+file1.close()
+
+# save the dataframe with frequences
+df_topics.to_csv(r'/home/veror/PycharmProjects/DataMiningProj_OK/res_eff_apriori_rules.csv')
+
+file1 = open('pickle_time_eff_apriori_rules', 'wb')
+pickle.dump(time_eff_apriori_time_rules, file1)
+file1.close()'''
+
+# read the outputs
+# read the dictionary dict_topic_day_num
+'''file1 = open('/home/veror/PycharmProjects/DataMiningProj_OK/res_EFF_APRIORI_RULES/pickle_eff_apriori_rules', 'rb')
+pickle_eff_apriori = pickle.load(file1)
+print(pickle_eff_apriori)
+
+# read the dictionary dict_topic_day_num
+file2 = open('/home/veror/PycharmProjects/DataMiningProj_OK/res_EFF_APRIORI_RULES/pickle_time_eff_apriori_rules', 'rb')
+pickle_time_eff_apriori = pickle.load(file2)
+print(pickle_time_eff_apriori)
+
+# read the dataset of frequences
+df_eff_apriori = pd.read_csv("/home/veror/PycharmProjects/DataMiningProj_OK/res_EFF_APRIORI_RULES/res_eff_apriori_rules.csv", )
+print(df_eff_apriori)'''
+
+#######################################################################################################################
+# ALSO SINGLETON
+# NAIVE_FUN (TOP_K) with also singleton and computing frequences only of frequent topics
+'''start_time = time.time()
+
+apply_fun_res_3 = apply_fun('naive_fun', 25, column_dataframe)
 print(apply_fun_res_3)
 
 create_dict_topics_also_singleton_res = create_dict_topics_also_singleton(apply_fun_res_3)
@@ -416,7 +612,7 @@ file1 = open('pickle_naive_fun_normal', 'wb')
 pickle.dump(create_dict_topics_also_singleton_res[0], file1)
 file1.close()
 
-df_topics = pd.DataFrame.from_dict(create_dict_topics_also_singleton_res[1], orient='index', columns=list_date[:3])
+df_topics = pd.DataFrame.from_dict(create_dict_topics_also_singleton_res[1], orient='index', columns=list_date[:25])
 df_topics["Number of occurrences"] = create_dict_topics_also_singleton_res[2]
 print(df_topics)
 
@@ -428,24 +624,72 @@ print("--- %s seconds ---" % time_naive)
 
 file1 = open('pickle_time_naive_fun_normal', 'wb')
 pickle.dump(time_naive, file1)
-file1.close()
+file1.close()'''
 
 # read the outputs
-'''# read the dictionary dict_topic_day_num
-file1 = open('pickle_eff_apriori_fun_normal', 'rb')
+# read the dictionary dict_topic_day_num
+'''file1 = open('/home/veror/PycharmProjects/DataMiningProj_OK/res_NAIVE_NORMAL/pickle_naive_fun_normal', 'rb')
 pickle_eff_apriori = pickle.load(file1)
 print(pickle_eff_apriori)
 
 # read the dictionary dict_topic_day_num
-file2 = open('pickle_time_eff_apriori_fun_normal', 'rb')
+file2 = open('/home/veror/PycharmProjects/DataMiningProj_OK/res_NAIVE_NORMAL/pickle_time_naive_fun_normal', 'rb')
 pickle_time_eff_apriori = pickle.load(file2)
 print(pickle_time_eff_apriori)
 
 # read the dataset of frequences
-df_eff_apriori = pd.read_csv("/home/veror/PycharmProjects/DataMiningProj_OK/res_eff_apriori_fun_normal.csv", )
+df_eff_apriori = pd.read_csv("/home/veror/PycharmProjects/DataMiningProj_OK/res_NAIVE_NORMAL/res_naive_fun_normal.csv", )
 print(df_eff_apriori)'''
 
+#######################################################################################################################
+# NOT SINGLETON
+# NAIVE_FUN (TOP_K) without singleton and computing frequences only of frequent topics
+'''start_time = time.time()
 
+apply_fun_res_3 = apply_fun('naive_fun', 25, column_dataframe)
+print(apply_fun_res_3)
+
+create_dict_topics_also_singleton_res = create_dict_topics_also_singleton(apply_fun_res_3)
+print("create_dict_topics_also_singleton_res[0]", create_dict_topics_also_singleton_res[0])
+print("create_dict_topics_also_singleton_res[1]", create_dict_topics_also_singleton_res[1])
+print("create_dict_topics_also_singleton_res[2]", create_dict_topics_also_singleton_res[2])
+
+# save the result dictionary dict_topic_day_num
+file1 = open('pickle_naive_fun_no_singletons', 'wb')
+pickle.dump(create_dict_topics_also_singleton_res[0], file1)
+file1.close()
+
+df_topics = pd.DataFrame.from_dict(create_dict_topics_also_singleton_res[1], orient='index', columns=list_date[:25])
+df_topics["Number of occurrences"] = create_dict_topics_also_singleton_res[2]
+print(df_topics)
+
+df_topics.to_csv(r'/home/veror/PycharmProjects/DataMiningProj_OK/res_naive_fun_no_singletons.csv')
+
+print('Time to find frequent itemset')
+time_naive_no_singletons = time.time() - start_time
+print("--- %s seconds ---" % time_naive_no_singletons)
+
+file1 = open('pickle_time_naive_fun_no_singletons', 'wb')
+pickle.dump(time_naive_no_singletons, file1)
+file1.close()'''
+
+# read the outputs
+# read the dictionary dict_topic_day_num
+'''file1 = open('/home/veror/PycharmProjects/DataMiningProj_OK/res_NAIVE_NORMAL_NO_SINGLETONS/pickle_naive_fun_no_singletons', 'rb')
+pickle_eff_apriori = pickle.load(file1)
+print(pickle_eff_apriori)
+'''
+# read the dictionary dict_topic_day_num
+file2 = open('/home/veror/PycharmProjects/DataMiningProj_OK/res_NAIVE_NORMAL_NO_SINGLETONS/pickle_time_naive_fun_no_singletons', 'rb')
+pickle_time_eff_apriori = pickle.load(file2)
+print(pickle_time_eff_apriori)
+
+# read the dataset of frequences
+df_eff_apriori = pd.read_csv("/home/veror/PycharmProjects/DataMiningProj_OK/res_NAIVE_NORMAL_NO_SINGLETONS/res_naive_fun_no_singletons.csv", )
+print(df_eff_apriori)
+#print(sorted(df_eff_apriori['Unnamed: 0']))
+
+######################################################################################################################
 # TODO QUESTA E' UGUALE A QUELLA SOPRA 1.0
 # TODO 1.1) da usare con eff_apriori_rules_fun (considera itemsets freq con dimensione > 1) e NON calcola freq di quelli non freq
 def create_dict_topics_tuple(dict_day_topic):
