@@ -120,7 +120,7 @@ def eff_apriori_fun(transactions_string): # , min_sup, min_conf, min_len, min_li
   transactions = pd.eval(transactions_string)
   #print(len(transactions))
   #transactions = transactions_string
-  itemsets, rules = apriori(transactions, min_support=0.03, min_confidence=0.7) # , output_transaction_ids=True
+  itemsets, rules = apriori(transactions, min_support=0.04, min_confidence=0.7) # , output_transaction_ids=True
   #for rule in rules:
     #print(rule)
     #print(rule.rhs + rule.lhs)
@@ -355,7 +355,7 @@ def create_dict_topics_also_singleton(dict_day_topic):
 #######################################################################################################################
 #ALSO SINGLETON
 # EFF_ARIORI_FUN with also singleton and computing frequences only of frequent topics
-'''start_time = time.time()
+start_time = time.time()
 
 apply_fun_res_1 = apply_fun('eff_apriori_fun', 25, column_dataframe)
 #print("apply_fun_res_1", apply_fun_res_1)
@@ -372,10 +372,10 @@ df_topics["Number of occurrences"] = create_dict_topics_also_singleton_res[2]
 print('Time to find frequent itemset')
 time_eff_apriori = time.time() - start_time
 print("--- %s seconds ---" % time_eff_apriori)
-'''
+
 
 # save the result dictionary dict_topic_day_num
-'''file1 = open('pickle_eff_apriori_fun_normal', 'wb')
+file1 = open('pickle_eff_apriori_fun_normal', 'wb')
 pickle.dump(create_dict_topics_also_singleton_res[0], file1)
 file1.close()
 
@@ -384,7 +384,7 @@ df_topics.to_csv(r'/home/veror/PycharmProjects/DataMiningProj_OK/res_eff_apriori
 
 file1 = open('pickle_time_eff_apriori_fun_normal', 'wb')
 pickle.dump(time_eff_apriori, file1)
-file1.close()'''
+file1.close()
 
 # read the outputs
 # read the dictionary dict_topic_day_num
@@ -678,7 +678,7 @@ file1.close()'''
 '''file1 = open('/home/veror/PycharmProjects/DataMiningProj_OK/res_NAIVE_NORMAL_NO_SINGLETONS/pickle_naive_fun_no_singletons', 'rb')
 pickle_eff_apriori = pickle.load(file1)
 print(pickle_eff_apriori)
-'''
+
 # read the dictionary dict_topic_day_num
 file2 = open('/home/veror/PycharmProjects/DataMiningProj_OK/res_NAIVE_NORMAL_NO_SINGLETONS/pickle_time_naive_fun_no_singletons', 'rb')
 pickle_time_eff_apriori = pickle.load(file2)
@@ -688,7 +688,7 @@ print(pickle_time_eff_apriori)
 df_eff_apriori = pd.read_csv("/home/veror/PycharmProjects/DataMiningProj_OK/res_NAIVE_NORMAL_NO_SINGLETONS/res_naive_fun_no_singletons.csv", )
 print(df_eff_apriori)
 #print(sorted(df_eff_apriori['Unnamed: 0']))
-
+'''
 ######################################################################################################################
 # TODO QUESTA E' UGUALE A QUELLA SOPRA 1.0
 # TODO 1.1) da usare con eff_apriori_rules_fun (considera itemsets freq con dimensione > 1) e NON calcola freq di quelli non freq
