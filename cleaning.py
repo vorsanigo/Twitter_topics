@@ -70,21 +70,33 @@ def clean_text_tuple(text):
 def to_date(date_time):
     '''Given a date_time, it returns a date'''
     # split following datetime format in the dataset
-    date_time_obj = datetime.strptime(date_time, '%Y-%m-%d %H:%M:%S')
+    # TODO SPECIAL THIS LINE
+    #date_time_obj = datetime.strptime(date_time, '%Y-%m-%d %H:%M:%S')
     # date from datetime object
-    date = date_time_obj.date()
+    #date = date_time_obj.date()
+    # TODO END SPECIAL THIS LINE
+    date = date_time.date()
     return date
 
-def cleaning(df_path, list_column_drop, path_cleaned, path_grouped):
+def cleaning_fun(df_path, list_column_drop, path_cleaned, path_grouped):
     '''Given a dataset of tweets, it cleans tweets' text and it groups the cleaned tweets by date'''
 
     # read the starting dataset
     df = pd.read_csv(df_path)
 
-    # keep only columns selected ("date", "text", and "hashtags")
+    # keep only columns selected ("date", "text", (and "hashtags"))
     df.drop(list_column_drop, axis=1, inplace=True)
     #df.drop(['user_name', 'user_location', 'user_description', 'user_created', 'user_followers', 'user_friends',
     #         'user_favourites', 'user_verified', 'source', 'is_retweet'], axis=1, inplace=True)
+    #print(df.shape[1])
+    if df.shape[1] == 2:
+        df.columns = ['date', 'text']
+
+    # TODO SPECIAL
+    # convert to datetime and drop dates with not correct format
+    df['date'] = pd.to_datetime(df['date'], format='%Y-%m-%d %H:%M:%S', errors='coerce')
+    df = df[pd.notnull(df['date'])]
+    # TODO END SPECIAL
 
     #segmenter using the word statistics from Twitter
     # TODO PROBABLY TO ELIMINATE
@@ -124,10 +136,10 @@ def cleaning(df_path, list_column_drop, path_cleaned, path_grouped):
     #df3.to_csv(r'/home/veror/PycharmProjects/DataMiningProj_OK/DATASET_covid19_group_tuple.csv', index=False, sep=' ')
     #df3.to_csv(r'/home/veror/PycharmProjects/DataMiningProj_OK/DATASET_covid19_group_tuple_sep_comma.csv', index=False)
 
-cleaning("/home/veror/PycharmProjects/DataMiningProj_OK/DATASET_covid19_tweets.csv", ['user_name', 'user_location',
+'''cleaning_fun("/home/veror/PycharmProjects/DataMiningProj_OK/DATASET_covid19_tweets.csv", ['user_name', 'user_location',
             'user_description', 'user_created', 'user_followers', 'user_friends', 'user_favourites', 'user_verified', 'source', 'is_retweet'],
          '/home/veror/PycharmProjects/DataMiningProj_OK/PROVA_CLEANING.csv', '/home/veror/PycharmProjects/DataMiningProj_OK/PROVA_GROUPED.csv')
-
+'''
 
 
 
