@@ -2,14 +2,10 @@ import pandas as pd
 from efficient_apriori import apriori
 import pickle
 from mlxtend.frequent_patterns import fpgrowth
-from mlxtend.frequent_patterns import association_rules
 from mlxtend.preprocessing import TransactionEncoder
 import time
 from collections import Counter
 from itertools import combinations
-import itertools
-import matplotlib
-import matplotlib.pyplot as plt
 from itertools import dropwhile
 
 # TODO input utente: numero di topic restituiti, magari lunghezza topic ----> OK
