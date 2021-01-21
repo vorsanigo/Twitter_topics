@@ -2,6 +2,8 @@ import algorithm
 import pandas as pd
 import time
 
+
+# -*- coding: utf-8 -*-
 # TODO ESPERIMENTI CON FZ: APRIORI, APRIORI_RULES, NAIVE (FEQ O TOP_KEY?)
 # TODO GRAFICO DI QUALCUNO
 # TODO CONSIDERARE QUELLI FREQUENTI SOLO IN UN GIORNO? MAGARI NO/SI -> ARGOMENTARE
@@ -10,8 +12,8 @@ import time
 # TODO COME USARE L'UTENTE?
 # TODO REPORT
 
-# TODO per semplicità lasciare i dataset possibili nella stessa cartella, così non necessita il path
-# accetta sia .csv che senza perché lo aggiunge lui
+# TODO per semplicita' lasciare i dataset possibili nella stessa cartella, cosi non necessita il path
+# accetta sia .csv che senza perche lo aggiunge lui
 def input_user():
     '''Function to get parameters from the user to execute the algorithm to find frequent topics'''
     dataset = input("Select the dataset where you want to find frequent topics:")
@@ -20,12 +22,13 @@ def input_user():
     df = pd.read_csv(dataset, sep=' ')
     print(df)
     topics_singletons = 2
-    type_algorithm = 2
-    topics_number = int(input("\nSelect how many frequent topics you want are returned, type 0 if you want all the possible ones:"))
-    while(topics_singletons != 0 and topics_singletons != 1):
-        topics_singletons = int(input("\nSelect:\n0 - if you do NOT want topics with only one term\n1 - if you want also topics with only one term\nType:"))
-    while(type_algorithm != 0 and type_algorithm != 1):
+    type_algorithm = 3
+    topics_number = int(input("\nSelect how many frequent topics you want are returned type 0 if you want all the possible ones:"))
+    while(type_algorithm != 0 and type_algorithm != 1 and type_algorithm != 2):
         type_algorithm = int(input("\nSelect the number of the algorithm you want to apply:\n0 - baseline algorithm\n1 - apriori-based algorithm\n2 - apriori-based algorithms with association rules\nType:"))
+    if type_algorithm != 2:
+        while (topics_singletons != 0 and topics_singletons != 1):
+            topics_singletons = int(input("\nSelect:\n0 - if you do NOT want topics with only one term\n1 - if you want also topics with only one term\nType:"))
     return {'dataset': dataset, 'topics_number': topics_number, 'topics_singletons': topics_singletons, 'type_algorithm': type_algorithm}
 #res = input_user()
 
@@ -68,10 +71,21 @@ def run_algorithm():
     time_topics = time.time() - start_time
     print("--- %s seconds ---" % time_topics)
     # cut results according to user's request
-    if input_res['type_algorithm'] == 1:
-        result.to_csv('/home/veror/PycharmProjects/DataMiningProj_OK/results/algorithm_result_apriori.csv', sep=',')
+    if input_res['type_algorithm'] == 0:
+        result.to_csv('results/algorithm_result_naive.csv', sep=' ')
+        f = open("results/time_naive.txt", 'w')
+        f.write("Time naive: " + str(time_topics))
+        f.close()
+    elif input_res['type_algorithm'] == 1:
+        result.to_csv('results/algorithm_result_apriori.csv', sep=',')
+        f = open("results/time_apriori.txt", 'w')
+        f.write("Time apriori: " + str(time_topics))
+        f.close()
     else:
-        result.to_csv('/home/veror/PycharmProjects/DataMiningProj_OK/results/algorithm_result_naive.csv', sep=' ')
+        result.to_csv('results/algorithm_result_apriori_rules.csv', sep=' ')
+        f = open("results/time_apriori_rules.txt", 'w')
+        f.write("Time apriori rules: " + str(time_topics))
+        f.close()
     return result
 
 print(run_algorithm())
