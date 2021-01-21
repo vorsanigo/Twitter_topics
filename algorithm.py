@@ -8,6 +8,7 @@ from collections import Counter
 from itertools import combinations
 from itertools import dropwhile
 
+# -*- coding: utf-8 -*-
 # TODO input utente: numero di topic restituiti, magari lunghezza topic ----> OK
 
 # TODO sistemare funzioni mettendo variabili come parametri (es: lunghezza lista delle date) ----------> OK
@@ -21,15 +22,15 @@ from itertools import dropwhile
 
 # TODO considerare le association rules?
 
-# TODO threshold è ok così basso? fare test con anche un poco più alto, ma si perdono cose
+# TODO threshold e' ok così basso? fare test con anche un poco piu' alto, ma si perdono cose
 
 # TODO confrontare prestazioni naive e apriori -> minor numero di comparazioni, usa threshold invece di top-k (???), se
 # TODO si dovessero guardare tutte le possibili combinazioni con naive necessiterebbe troppo tempo, ci fermiamo a length = 4
 
 # TODO scegliere altri dataset (sottoinsieme? altri?)
 
-# TODO capire perché teniamo anche le parole molto frequenti -> la correlazione con gli altri non è casuale in questo modo?
-# TODO oppure no perché anche se frequenti sempre nel periodo sono importanti, dato che se troviamo putin insieme a covid significa che
+# TODO capire perche' teniamo anche le parole molto frequenti -> la correlazione con gli altri non è casuale in questo modo?
+# TODO oppure no perche' anche se frequenti sempre nel periodo sono importanti, dato che se troviamo putin insieme a covid significa che
 # TODO il topic riguarda sia covid che putin
 
 # TODO capire se tenere tutte le frequenze per fare i grafici
