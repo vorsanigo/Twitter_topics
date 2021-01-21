@@ -80,12 +80,12 @@ print((len(main_list_1)))
 #print("----------------------")
 
 # read dataframe grouped by day
-'''df_grouped = pd.read_csv("/home/veror/PycharmProjects/DataMiningProj_OK/DATASET_covid19_group_tuple.csv", sep=' ')
+df_grouped = pd.read_csv("/home/veror/PycharmProjects/DataMiningProj_OK/DATASET_covid19_group_tuple.csv", sep=' ')
 #print(dff)
 print("----------------------")
 list_date = df_grouped['date_only'].tolist()
 
-column_dataframe = df_grouped['text_cleaned_tuple']'''
+column_dataframe = df_grouped['text_cleaned_tuple']
 
 '''df_grouped = pd.read_csv("/home/veror/PycharmProjects/DataMiningProj_OK/DATASET_AUSTRALIA_group_tuple.csv", sep=' ')
 #print(dff)
@@ -192,7 +192,31 @@ def eff_apriori_rules_fun(transactions_string): # , min_sup, min_conf, min_len, 
   '''
   return dict_topic
 
+def mlx_apriori_fun(transactions_string):
+  te = TransactionEncoder()
 
+  transactions = pd.eval(transactions_string)
+
+  te_ary = te.fit(transactions).transform(transactions)
+  df1 = pd.DataFrame(te_ary, columns=te.columns_)
+  print("-------------")
+  #print(df1)
+
+  res = fpgrowth(df1, min_support=0.03, use_colnames=True)
+  #print(res)
+
+  print("TYPEEEEEEEEEEEEEEEEEE", type(res))
+  list_itemsets = res['itemsets'].tolist()
+  list_support = res['support'].tolist()
+  print(list_support)
+  print(list_itemsets)
+  tot_list = list(zip(list_itemsets, list_support))
+  print(tot_list)
+  dict_topic = {}
+  for el in tot_list:
+    dict_topic[el[0]] = (el[1], el[1]*len(transactions))
+
+  return(dict_topic)
 
 # HERE: ALL THE POSSIBLE L -> only until 4, since more there is a problem with memory -> loop for all the cases
 def naive_fun(transactions_string):
@@ -290,6 +314,8 @@ def apply_fun(name_fun, dimension, column_dataframe): # column_dataframe = df_gr
       result = eff_apriori_fun(column_dataframe.values[i])
     elif name_fun == "eff_apriori_rules_fun":
       result = eff_apriori_rules_fun(column_dataframe.values[i])
+    elif name_fun == "mlx_apriori_fun":
+      result =mlx_apriori_fun(column_dataframe.values[i])
     elif name_fun == "naive_fun_freq":
       result = naive_fun_freq(column_dataframe.values[i])
     else:
@@ -300,6 +326,7 @@ def apply_fun(name_fun, dimension, column_dataframe): # column_dataframe = df_gr
   #print("\n\n\n")
   print("DICT DAY TOPIC", dict_day_topic)
   return dict_day_topic
+
 
 
 def count_itemset(tuple_topic, transactions): # da fare nel day in cui manca la freq
@@ -363,6 +390,26 @@ def create_dict_topics_also_singleton(dict_day_topic):
         dict_to_dataframe[topic] = (list_freq_dataset)
         list_count.append(count)
   return dict_topic_day_num, dict_to_dataframe, list_count
+
+######################################################################################################################
+# ALSO SINGLETON
+# MLX_APRIORI_FUN with also singleton and computing frequences only of frequent topics
+'''start_time = time.time()
+res = apply_fun('mlx_apriori_fun', 25, column_dataframe)
+print(len(res.keys()))
+create_dict_topics_also_singleton_res = create_dict_topics_also_singleton(res)
+print("create_dict_topics_also_singleton_res[0]", create_dict_topics_also_singleton_res[0])
+print("create_dict_topics_also_singleton_res[1]", create_dict_topics_also_singleton_res[1])
+print("create_dict_topics_also_singleton_res[2]", create_dict_topics_also_singleton_res[2])
+
+df_topics = pd.DataFrame.from_dict(create_dict_topics_also_singleton_res[1], orient='index', columns=list_date[:25])
+df_topics["Number of occurrences"] = create_dict_topics_also_singleton_res[2]
+print(df_topics)
+df_topics.to_csv(r'/home/veror/PycharmProjects/DataMiningProj_OK/res_mlx.csv', sep=' ')
+
+print('Time to find frequent itemset')
+time_mlx_apriori = time.time() - start_time
+print("--- %s seconds ---" % time_mlx_apriori)'''
 
 #######################################################################################################################
 #ALSO SINGLETON
@@ -957,20 +1004,7 @@ for day in pickle_topics:
 # MLX APRIORI
 
 
-def mlx_apriori_fun(transactions_string):
-  te = TransactionEncoder()
 
-  transactions = pd.eval(transactions_string)
-
-  te_ary = te.fit(transactions).transform(transactions)
-  df1 = pd.DataFrame(te_ary, columns=te.columns_)
-  print("-------------")
-  #print(df1)
-
-  res = fpgrowth(df1, min_support=0.03, use_colnames=True)
-  #print(res)
-
-  return(res)
 
 
 '''transactions_topics = []
