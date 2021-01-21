@@ -77,7 +77,7 @@ print((len(main_list_1)))
 '''
 
 #print(df)
-print("----------------------")
+#print("----------------------")
 
 # read dataframe grouped by day
 '''df_grouped = pd.read_csv("/home/veror/PycharmProjects/DataMiningProj_OK/DATASET_covid19_group_tuple.csv", sep=' ')
@@ -87,13 +87,13 @@ list_date = df_grouped['date_only'].tolist()
 
 column_dataframe = df_grouped['text_cleaned_tuple']'''
 
-df_grouped = pd.read_csv("/home/veror/PycharmProjects/DataMiningProj_OK/DATASET_AUSTRALIA_group_tuple.csv", sep=' ')
+'''df_grouped = pd.read_csv("/home/veror/PycharmProjects/DataMiningProj_OK/DATASET_AUSTRALIA_group_tuple.csv", sep=' ')
 #print(dff)
 print("----------------------")
 list_date = df_grouped['date_only'].tolist()
 print(list_date)
 print(len(list_date))
-column_dataframe = df_grouped['text_cleaned_tuple']
+column_dataframe = df_grouped['text_cleaned_tuple']'''
 
 
 # TODO decidere dove metterlo
@@ -367,7 +367,7 @@ def create_dict_topics_also_singleton(dict_day_topic):
 #######################################################################################################################
 #ALSO SINGLETON
 # EFF_ARIORI_FUN with also singleton and computing frequences only of frequent topics
-start_time = time.time()
+'''start_time = time.time()
 
 apply_fun_res_1 = apply_fun('eff_apriori_fun', 11, column_dataframe)
 #print("apply_fun_res_1", apply_fun_res_1)
@@ -396,7 +396,7 @@ df_topics.to_csv(r'/home/veror/PycharmProjects/DataMiningProj_OK/res_eff_apriori
 
 file1 = open('pickle_time_eff_apriori_fun_normal_AUSTRALIA', 'wb')
 pickle.dump(time_eff_apriori, file1)
-file1.close()
+file1.close()'''
 
 # read the outputs
 # read the dictionary dict_topic_day_num
