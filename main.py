@@ -2,6 +2,14 @@ import algorithm
 import pandas as pd
 import time
 
+# TODO ESPERIMENTI CON FZ: APRIORI, APRIORI_RULES, NAIVE (FEQ O TOP_KEY?)
+# TODO GRAFICO DI QUALCUNO
+# TODO CONSIDERARE QUELLI FREQUENTI SOLO IN UN GIORNO? MAGARI NO/SI -> ARGOMENTARE
+# TODO magari togliere parole super frequenti?
+# TODO QUALI ALTRI ESPERIMENTI FARE? ALTRO DATASET, SOTTOPORZIONI DI DATASET? ANALISI STATISTICHE?
+# TODO COME USARE L'UTENTE?
+# TODO REPORT
+
 # TODO per semplicità lasciare i dataset possibili nella stessa cartella, così non necessita il path
 # accetta sia .csv che senza perché lo aggiunge lui
 def input_user():
