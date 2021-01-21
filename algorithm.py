@@ -93,8 +93,8 @@ print("----------------------")
 list_date = df_grouped['date_only'].tolist()
 print(list_date)
 print(len(list_date))
-column_dataframe = df_grouped['text_cleaned_tuple']'''
-
+column_dataframe = df_grouped['text_cleaned_tuple']
+print(df_grouped.shape[0])'''
 
 # TODO decidere dove metterlo
 '''start_time = time.time()
