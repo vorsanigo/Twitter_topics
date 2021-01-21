@@ -19,9 +19,6 @@ from ekphrasis.classes.segmenter import Segmenter
 import preprocessor as p
 #important libraries for preprocessing using NLTK
 import nltk
-from nltk import word_tokenize, FreqDist
-from nltk.corpus import stopwords
-from nltk.stem import WordNetLemmatizer
 nltk.download
 nltk.download('wordnet')
 nltk.download('stopwords')
@@ -79,66 +76,6 @@ seg_tw = Segmenter(corpus="twitter")
 # tweet-preprocessor package deals with URLs, mentions, reserved words, emojis, smileys, we keep only hashtags
 p.set_options(p.OPT.URL, p.OPT.MENTION, p.OPT.RESERVED, p.OPT.EMOJI, p.OPT.SMILEY, p.OPT.NUMBER) # keep hashtags
 df['tweet_preprocessed'] = df['text'].apply(lambda x: p.clean(x))
-
-#print(df)
-#df.to_csv(r'/home/veror/PycharmProjects/DataMiningProj_OK/PROVA.csv', index=False)
-#print(df.iloc[65503])
-
-
-
-# TODO not used
-'''# CLEANING: step 2 -> remove punctuation, tokenization, stopwords, stemming(?)
-# remove punctuation and numbers?
-# string.punctuation = '!"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~'
-def remove_punct(text):
-    text = "".join([char for char in text if char not in string.punctuation])
-    text = re.sub('[0-9]+', '', text) # remove numbers
-    return text
-
-#df['text_punct'] = df['text'].apply(lambda x: remove_punct(x))
-
-
-# tokenization splits the text string in a list of words (strings)
-def tokenization(text):
-    text = re.split('\W+', text)
-    return text
-
-#df['text_tokenized'] = df['text_punct'].apply(lambda x: tokenization(x.lower()))
-
-
-# remove stopwords
-stopword = nltk.corpus.stopwords.words('english')
-def remove_stopwords(text):
-    text = [word for word in text if word not in stopword]
-    return text
-
-#df['text_no_stopword'] = df['text_tokenized'].apply(lambda x: remove_stopwords(x))
-
-#print(df['text_no_stopword'])
-
-
-# stemming
-
-
-def stemming(text):
-    text = [ps.stem(word) for word in text]
-    return text'''
-
-#df['text_stemmed'] = df['text_no_stopword'].apply(lambda x: stemming(x))
-
-'''
-# lemmatization
-wn = nltk.WordNetLemmatizer()
-
-def lemmatizer(text):
-    text = [wn.lemmatize(word) for word in text]
-    return text
-
-df['text_lemmatized'] = df['text_no_stopword'].apply(lambda x: lemmatizer(x))'''
-# TODO end not used
-
-
-
 
 
 # Different functions to have the cleaned text in different possible forms
@@ -214,7 +151,7 @@ df3 = pd.DataFrame(df.groupby('date_only')['text_cleaned_tuple'].apply(list).res
 
 # save the datasets created into csv
 # SEPARATORE E' ' ' !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-df.to_csv(r'/home/veror/PycharmProjects/DataMiningProj_OK/DATASET_AUSTRALIA_tweets_cleaned_PR.csv', index=False, sep=' ', line_terminator='\n')
+df.to_csv(r'/home/veror/PycharmProjects/DataMiningProj_OK/DATASET_AUSTRALIA_tweets_cleaned.csv', index=False, sep=' ', line_terminator='\n')
 df1.to_csv(r'/home/veror/PycharmProjects/DataMiningProj_OK/DATASET_AUSTRALIA_group_text.csv', index=False)
 df2.to_csv(r'/home/veror/PycharmProjects/DataMiningProj_OK/DATASET_AUSTRALIA_group_string.csv', index=False)
 df3.to_csv(r'/home/veror/PycharmProjects/DataMiningProj_OK/DATASET_AUSTRALIA_group_tuple.csv', index=False, sep=' ')
