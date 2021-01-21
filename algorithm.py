@@ -12,11 +12,11 @@ import matplotlib
 import matplotlib.pyplot as plt
 from itertools import dropwhile
 
-# TODO input utente: numero di topic restituiti, magari lunghezza topic
+# TODO input utente: numero di topic restituiti, magari lunghezza topic ----> OK
 
-# TODO sistemare funzioni mettendo variabili come parametri (es: lunghezza lista delle date)
+# TODO sistemare funzioni mettendo variabili come parametri (es: lunghezza lista delle date) ----------> OK
 
-# TODO sistemare e mettere tutte le cose in ordine
+# TODO sistemare e mettere tutte le cose in ordine ----> PARZILMENTE OK
 
 # TODO FARE RUN CON TUTTE LE FREQUENZE PER FARE GRAFICI
 
@@ -80,12 +80,12 @@ print((len(main_list_1)))
 #print("----------------------")
 
 # read dataframe grouped by day
-df_grouped = pd.read_csv("/home/veror/PycharmProjects/DataMiningProj_OK/DATASET_covid19_group_tuple.csv", sep=' ')
+'''df_grouped = pd.read_csv("/home/veror/PycharmProjects/DataMiningProj_OK/DATASET_covid19_group_tuple.csv", sep=' ')
 #print(dff)
 print("----------------------")
 list_date = df_grouped['date_only'].tolist()
 
-column_dataframe = df_grouped['text_cleaned_tuple']
+column_dataframe = df_grouped['text_cleaned_tuple']'''
 
 '''df_grouped = pd.read_csv("/home/veror/PycharmProjects/DataMiningProj_OK/DATASET_AUSTRALIA_group_tuple.csv", sep=' ')
 #print(dff)
@@ -124,10 +124,10 @@ print(val1)'''
 #-------------------------------------------------------------------------------------------------------------------
 # EFFICIENT APRIORI
 # TODO CHANGE PARAMETERS, THINK ABOUT ASSOCIATION RULES
-def eff_apriori_fun(transactions_string): # , min_sup, min_conf, min_len, min_lift, len_rule
-  '''Given a transaction from the dataset (set of cleaned tweets of a single day), it returns a tuple containing the
-  itemsets output from efficient-apriori, the list of itemsets, and the list with the support for each itemset
-  -> (dict, list, list)'''
+def eff_apriori_fun(transactions_string, singleton): # , min_sup, min_conf, min_len, min_lift, len_rule
+  '''Given a transaction from the dataset (set of cleaned tweets of a single day) and the indication for singleton
+  results, it returns a dictionary containing the frequent topics and their frequency and number of occurrrences,
+  obtained by applying efficient_apriori on the transaction -> {topic: (freq, num_occ), ...}'''
 
   transactions = pd.eval(transactions_string)
   #print(len(transactions))
@@ -149,9 +149,14 @@ def eff_apriori_fun(transactions_string): # , min_sup, min_conf, min_len, min_li
       list_freq.append(itemsets[key][el])'''
 
   dict_topic = {}
-  for key in itemsets:
-    for el in itemsets[key]:
-      if len(el) > 1: # TODO uncomment if we want itemsets only of length > 1
+  if singleton == 0:
+    for key in itemsets:
+      for el in itemsets[key]:
+        if len(el) > 1: # TODO uncomment if we want itemsets only of length > 1
+          dict_topic[el] = itemsets[key][el]/len(transactions), itemsets[key][el] # topic: (freq, tot num)
+  else:
+    for key in itemsets:
+      for el in itemsets[key]:
         dict_topic[el] = itemsets[key][el]/len(transactions), itemsets[key][el] # topic: (freq, tot num)
 
   return dict_topic
@@ -160,9 +165,10 @@ def eff_apriori_fun(transactions_string): # , min_sup, min_conf, min_len, min_li
 # or more items and we consider only high correlation between the terms
 # TODO min_confidence: 0.6/0.7/0.8 forse le migliori ??
 def eff_apriori_rules_fun(transactions_string): # , min_sup, min_conf, min_len, min_lift, len_rule
-  '''Given a transaction from the dataset (set of cleaned tweets of a single day), it returns a tuple containing the
-  itemsets output from efficient-apriori, the list of itemsets, and the list with the support for each itemset
-  -> (dict, list, list)'''
+  '''Given a transaction from the dataset (set of cleaned tweets of a single day) it returns a dictionary containing
+  the frequent topics and their frequency and confidence of the related association rule, obtained by applying
+  efficient_apriori on the transaction and considering only sets from which it is possible to derive an association
+  rules with confidence above the threshold -> {topic: [freq, confidence], ...}'''
 
   transactions = pd.eval(transactions_string)
   print(len(transactions))
@@ -192,7 +198,11 @@ def eff_apriori_rules_fun(transactions_string): # , min_sup, min_conf, min_len, 
   '''
   return dict_topic
 
-def mlx_apriori_fun(transactions_string):
+def mlx_apriori_fun(transactions_string, singleton):
+  '''Given a transaction from the dataset (set of cleaned tweets of a single day) and the indication for singleton
+  results, it returns a dictionary containing the frequent topics and their frequency and number of occurrrences,
+  obtained by applying mlx_apriori on the transaction -> {topic: (freq, num_occ), ...}'''
+
   te = TransactionEncoder()
 
   transactions = pd.eval(transactions_string)
@@ -213,13 +223,21 @@ def mlx_apriori_fun(transactions_string):
   tot_list = list(zip(list_itemsets, list_support))
   print(tot_list)
   dict_topic = {}
-  for el in tot_list:
-    dict_topic[el[0]] = (el[1], el[1]*len(transactions))
+  if singleton == 0:
+    for el in tot_list:
+      if len(el) > 1:
+        dict_topic[el[0]] = (el[1], el[1]*len(transactions))
+  else:
+    for el in tot_list:
+      dict_topic[el[0]] = (el[1], el[1]*len(transactions))
 
   return(dict_topic)
 
 # HERE: ALL THE POSSIBLE L -> only until 4, since more there is a problem with memory -> loop for all the cases
-def naive_fun(transactions_string):
+def naive_fun(transactions_string, singleton):
+  '''Given a transaction from the dataset (set of cleaned tweets of a single day) and the indication for singleton
+  results, it returns a dictionary containing the frequent topics (as top-k) and their frequency and number of
+  occurrrences, obtained by computing the possible combinations of terms in a naive way -> {topic: (freq, num_occ), ...}'''
 
   transactions = pd.eval(transactions_string)
   #transactions = transactions_string
@@ -230,12 +248,16 @@ def naive_fun(transactions_string):
   #tuples_3 = Counter()
   #tuples_4 = Counter()
   #dict_counters[1] = Counter()
+  if singleton == 0:
+    len_comb = range(1, 4)
+  else:
+    len_comb = range(4)
   for sub in transactions:
     #if len(transactions) < 2:
       #continue
     sub.sort()
     #for i in range(len(sub)): # TODO così non funzionaaaaa perché ci sono troppe combinazioni
-    for i in range(1, 4): # put range(1, 4) if we want without singletons
+    for i in len_comb: # put range(1, 4) if we want without singletons
       #print(i)
       if not (i+1 in dict_counters.keys()):
         dict_counters[i+1] = Counter()
@@ -259,7 +281,11 @@ def naive_fun(transactions_string):
   return dict_topic #dict_counters
 
 
-def naive_fun_freq(transactions_string):
+def naive_fun_freq(transactions_string, singleton):
+  '''Given a transaction from the dataset (set of cleaned tweets of a single day) and the indication for singleton
+    results, it returns a dictionary containing the frequent topics (considering their freq) and their frequency and
+    number of occurrrences, obtained by computing the possible combinations of terms in a naive way ->
+    {topic: (freq, num_occ), ...}'''
 
   transactions = pd.eval(transactions_string)
   #transactions = transactions_string
@@ -270,12 +296,16 @@ def naive_fun_freq(transactions_string):
   #tuples_3 = Counter()
   #tuples_4 = Counter()
   #dict_counters[1] = Counter()
+  if singleton == 0:
+    len_comb = range(1, 4)
+  else:
+    len_comb = range(4)
   for sub in transactions:
     #if len(transactions) < 2:
       #continue
     sub.sort()
     #for i in range(len(sub)): # TODO così non funzionaaaaa perché ci sono troppe combinazioni
-    for i in range(1, 4): # put range(1, 4) if we want without singletons
+    for i in len_comb: # put range(1, 4) if we want without singletons
       #print(i)
       if not (i+1 in dict_counters.keys()):
         dict_counters[i+1] = Counter()
@@ -306,20 +336,24 @@ def naive_fun_freq(transactions_string):
   return dict_topic #dict_counters
 
 
-def apply_fun(name_fun, dimension, column_dataframe): # column_dataframe = df_grouped['text_cleaned_tuple']
+def apply_fun(name_fun, dimension, column_dataframe, singleton): # column_dataframe = df_grouped['text_cleaned_tuple']
+  '''Given a function to find frequent topics, it applies the function on all the transactions in the related column of
+  the dataset and returns, for eac day, the frequent topics with their frequency and number of occurrrences ->
+  {day0: {topic1_0: (freq, num_occ), topic2_0: (...)}, day1: {topic1_1: (freq, num_occ), ...}, ...}
+  '''
   dict_day_topic = {}
   for i in range(dimension):
     #print(df_grouped['text_cleaned_tuple'].values[i])
     if name_fun == "eff_apriori_fun":
-      result = eff_apriori_fun(column_dataframe.values[i])
+      result = eff_apriori_fun(column_dataframe.values[i], singleton)
     elif name_fun == "eff_apriori_rules_fun":
       result = eff_apriori_rules_fun(column_dataframe.values[i])
     elif name_fun == "mlx_apriori_fun":
-      result =mlx_apriori_fun(column_dataframe.values[i])
+      result =mlx_apriori_fun(column_dataframe.values[i], singleton)
     elif name_fun == "naive_fun_freq":
-      result = naive_fun_freq(column_dataframe.values[i])
+      result = naive_fun_freq(column_dataframe.values[i], singleton)
     else:
-      result = naive_fun(column_dataframe.values[i])
+      result = naive_fun(column_dataframe.values[i], singleton)
     print("RESULT:", result)
     #print("\n")
     dict_day_topic["day" + str(i)] = result
@@ -330,6 +364,7 @@ def apply_fun(name_fun, dimension, column_dataframe): # column_dataframe = df_gr
 
 
 def count_itemset(tuple_topic, transactions): # da fare nel day in cui manca la freq
+  '''Given a tuple A, and a list of tuples L, it returns how many times the tuple A is contained in the tuples of L'''
   counter = 0
   for tuple in transactions:
     if set(tuple_topic).issubset(tuple):
@@ -358,7 +393,10 @@ print("--- %s seconds ---" % (time.time() - start_time))
 print("\n")'''
 
 # TODO 1.0) da usare con eff_apriori_fun NON calcola freq di quelli non freq
-def create_dict_topics_also_singleton(dict_day_topic):
+def create_dict_topics(dict_day_topic):
+  '''Given a dictionary with days and their frequent topics, it returns a tuple containing a dictionary of topics with
+  the days in which they are frequent and the related frequency, a dictionary to transform in dataframe to show results,
+  a list with the number of days in which each topic is frequent'''
   dict_topic_day_num = {}
   dict_to_dataframe = {}
   list_count = []
@@ -751,7 +789,7 @@ print(df_eff_apriori)
 ######################################################################################################################
 # TODO QUESTA E' UGUALE A QUELLA SOPRA 1.0
 # TODO 1.1) da usare con eff_apriori_rules_fun (considera itemsets freq con dimensione > 1) e NON calcola freq di quelli non freq
-def create_dict_topics_tuple(dict_day_topic):
+'''def create_dict_topics_tuple(dict_day_topic):
   dict_topic_day_num = {}
   dict_to_dataframe = {}
   list_count = []
@@ -782,7 +820,7 @@ def create_dict_topics_tuple(dict_day_topic):
         dict_topic_day_num[topic] = (count, list(zip(list_day, list_num, list_freq)))
         dict_to_dataframe[topic] = (list_freq_dataset)
         list_count.append(count)
-  return dict_topic_day_num, dict_to_dataframe, list_count
+  return dict_topic_day_num, dict_to_dataframe, list_count'''
 
 # eff_apriori_rules_fun
 '''apply_fun_res_2 = apply_fun('eff_apriori_rules_fun', 3, column_dataframe)
@@ -1039,41 +1077,6 @@ print("--- %s seconds ---" % (time.time() - start_time))'''
 # https://stackoverflow.com/questions/31495507/finding-the-most-frequent-occurrences-of-pairs-in-a-list-of-lists
 
 # HERE: ALL THE POSSIBLE L -> only until 4, since more there is a problem with memory -> loop for all the cases
-def naive_fun(transactions_string):
-
-  transactions = pd.eval(transactions_string)
-  #transactions = transactions_string
-  print(len(transactions))
-  dict_counters = {}
-  '''tuples_1 = Counter()
-  tuples_2 = Counter()
-  tuples_3 = Counter()
-  tuples_4 = Counter()'''
-  #dict_counters[1] = Counter()
-  for sub in transactions:
-    #if len(transactions) < 2:
-      #continue
-    sub.sort()
-    #for i in range(len(sub)): # TODO così non funzionaaaaa perché ci sono troppe combinazioni
-    for i in range(4):
-      #print(i)
-      if not (i+1 in dict_counters.keys()):
-        dict_counters[i+1] = Counter()
-      for el in combinations(set(sub), i+1):
-        if len(el) == len(set(el)):
-          '''if not (el in dict_count.keys()):
-            dict_count[el] = 1 / len(transactions)
-          else:'''
-          #print(dict_counters[i+1])
-          dict_counters[i+1][el] += 1 #/ len(transactions)
-  dict_topic = {}
-  for key in dict_counters:
-    dict_counters[key] = dict_counters[key].most_common(10)
-    for el in dict_counters[key]:
-      #print("EL", el)
-      dict_topic[el[0]] = (el[1], el[1]/len(transactions))
-  #print(dict_topic)
-  return dict_topic #dict_counters
 
 # todo correct
 '''dict_day_topic = {}
@@ -1137,10 +1140,10 @@ print("--- %s seconds ---" % (time.time() - start_time))'''
 
 
 
-
+# TODO USELESS
 # TODO if we want to use this we need to also change a bit as in naive_fun
 # HERE: NOT ALL THE POSSIBLE SUBSETS OF ALL LENGTH -> single cases separated
-def naive_fun_2(transactions_string):
+'''def naive_fun_2(transactions_string):
 
   transactions = pd.eval(transactions_string)
   #transactions = transactions_string
@@ -1164,7 +1167,7 @@ def naive_fun_2(transactions_string):
     for tuple4 in combinations(set(sub), 4):
       if len(tuple4) == len(set(tuple4)):
         tuples_4[tuple4] += 1#/len(transactions)
-  return(tuples_1.most_common(10), tuples_2.most_common(10), tuples_3.most_common(10), tuples_4.most_common(10))
+  return(tuples_1.most_common(10), tuples_2.most_common(10), tuples_3.most_common(10), tuples_4.most_common(10))'''
 
 '''start_time = time.time()
 for i in range(1):
