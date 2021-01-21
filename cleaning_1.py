@@ -29,8 +29,6 @@ from nltk.tokenize import TweetTokenizer
 import pickle
 from datetime import datetime
 
-
-
 # read the starting dataset
 df = pd.read_csv("/home/veror/PycharmProjects/DataMiningProj_OK/DATASET_covid19_tweets.csv")
 #print(df.iloc[65503])
