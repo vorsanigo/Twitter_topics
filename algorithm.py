@@ -149,7 +149,7 @@ def eff_apriori_fun(transactions_string, singleton): # , min_sup, min_conf, min_
   if singleton == 0:
     for key in itemsets:
       for el in itemsets[key]:
-        if len(el) > 1: # TODO uncomment if we want itemsets only of length > 1
+        if len(el) > 1:
           dict_topic[el] = itemsets[key][el]/len(transactions), itemsets[key][el] # topic: (freq, tot num)
   else:
     for key in itemsets:
@@ -283,7 +283,7 @@ def naive_fun_freq(transactions_string, singleton):
     results, it returns a dictionary containing the frequent topics (considering their freq) and their frequency and
     number of occurrrences, obtained by computing the possible combinations of terms in a naive way ->
     {topic: (freq, num_occ), ...}'''
-
+  #start_time = time.time()
   transactions = pd.eval(transactions_string)
   #transactions = transactions_string
   print(len(transactions))
@@ -313,21 +313,33 @@ def naive_fun_freq(transactions_string, singleton):
           #else:
           #print(dict_counters[i+1])
           dict_counters[i+1][tuple(sorted(el))] += 1 / len(transactions) #TODO NB: non si può mettere /len(transactions alla fine perché ci derve la freq in riga 357
+  '''print('Time to find frequent topics:')
+  time_topics = time.time() - start_time
+  print("--- %s seconds ---" % time_topics)'''
+
   dict_topic = {}
   #print(dict_counters)
   #print("-----------------------------------\n\n")
   for key in dict_counters:
+    #start_time = time.time()
     for k, count in dropwhile(lambda key_count: key_count[1] >= 0.03, dict_counters[key].most_common()):
       del dict_counters[key][k]
     #print("ECCOLO", dict_counters[key])
     #print(dict_counters[key])
     dict_counters[key] = dict_counters[key].most_common()
+    '''print('TIME:')
+    time_topics = time.time() - start_time
+    print("--- %s seconds ---" % time_topics)'''
     #c = 0
+    #start_time = time.time()
     for el in dict_counters[key]:
       #print("EL", el, " ", el[1])
       #c += 1
       #print("EL", el, " ", c)
       dict_topic[el[0]] = (el[1], round(el[1]*len(transactions)))
+    '''print('qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq:')
+    time_topics = time.time() - start_time
+    print("--- %s seconds ---" % time_topics)'''
   #print(dict_topic)
   print(dict_counters)
   return dict_topic #dict_counters
@@ -358,7 +370,48 @@ def apply_fun(name_fun, dimension, column_dataframe, singleton): # column_datafr
   print("DICT DAY TOPIC", dict_day_topic)
   return dict_day_topic
 
-
+# TODO LESS CHECKS
+'''def apply_fun(name_fun, dimension, column_dataframe, singleton): # column_dataframe = df_grouped['text_cleaned_tuple']
+  Given a function to find frequent topics, it applies the function on all the transactions in the related column of
+  the dataset and returns, for eac day, the frequent topics with their frequency and number of occurrrences ->
+  {day0: {topic1_0: (freq, num_occ), topic2_0: (...)}, day1: {topic1_1: (freq, num_occ), ...}, ...}
+  
+  dict_day_topic = {}
+  result = {}
+  #print(df_grouped['text_cleaned_tuple'].values[i])
+  if name_fun == "eff_apriori_fun":
+    for i in range(dimension):
+      result = eff_apriori_fun(column_dataframe.values[i], singleton)
+      print("RESULT:", result)
+      # print("\n")
+      dict_day_topic["day" + str(i)] = result
+  elif name_fun == "eff_apriori_rules_fun":
+    for i in range(dimension):
+      result = eff_apriori_rules_fun(column_dataframe.values[i])
+      print("RESULT:", result)
+      # print("\n")
+      dict_day_topic["day" + str(i)] = result
+  elif name_fun == "mlx_apriori_fun":
+    for i in range(dimension):
+      result =mlx_apriori_fun(column_dataframe.values[i], singleton)
+      print("RESULT:", result)
+      # print("\n")
+      dict_day_topic["day" + str(i)] = result
+  elif name_fun == "naive_fun_freq":
+    for i in range(dimension):
+      result = naive_fun_freq(column_dataframe.values[i], singleton)
+      print("RESULT:", result)
+      # print("\n")
+      dict_day_topic["day" + str(i)] = result
+  else:
+    for i in range(dimension):
+      result = naive_fun(column_dataframe.values[i], singleton)
+      print("RESULT:", result)
+      #print("\n")
+      dict_day_topic["day" + str(i)] = result
+  #print("\n\n\n")
+  print("DICT DAY TOPIC", dict_day_topic)
+  return dict_day_topic'''
 
 def count_itemset(tuple_topic, transactions): # da fare nel day in cui manca la freq
   '''Given a tuple A, and a list of tuples L, it returns how many times the tuple A is contained in the tuples of L'''
