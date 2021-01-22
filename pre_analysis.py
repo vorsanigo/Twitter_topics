@@ -21,6 +21,20 @@ def plot_date_tweets(list_date_counts, path_figure):
     plt.savefig(path_figure)
     plt.show()
 
+def plot_freq_topic(list_date, res_df, topic_index, path_figure):
+    list_freq = []
+    list_date_ok = []
+    for column in list_date:
+        el = res_df.iloc[topic_index][column]
+        print("EL", el)
+        if pd.notnull(el):
+            list_freq = list_freq.append(el)
+            list_date_ok = list_date_ok.append(column)
+    plt.plot(list_date_ok, list_freq)
+    plt.savefig(path_figure)
+    plt.show()
+
+
 # pickle
 '''file1 = open('pickle_covid_date_counts', 'wb')
 pickle.dump(list_date_counts, file1)
