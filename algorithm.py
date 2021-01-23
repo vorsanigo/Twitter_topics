@@ -282,7 +282,8 @@ def naive_fun(transactions, singleton, num_day):
     for el in dict_counters[key]:
       #c += 1
       #print("EL", el, " ", c)
-      dict_topic[el[0]] = (el[1]/len(transactions), el[1])
+      #dict_topic[el[0]] = (el[1]/len(transactions), el[1])
+      dict_topic[el[0]] = (el[1] / len(transactions), el[1])
   #print(dict_topic)
   return dict_topic #dict_counters
 
@@ -292,7 +293,8 @@ def naive_fun_freq(transactions, singleton, num_day):
     results, it returns a dictionary containing the frequent topics (considering their freq) and their frequency and
     number of occurrrences, obtained by computing the possible combinations of terms in a naive way ->
     {topic: (freq, num_occ), ...}'''
-  #start_time = time.time()
+
+  start_time = time.time()
   #transactions = pd.eval(transactions_string)
   #transactions = transactions_string
 
@@ -327,33 +329,37 @@ def naive_fun_freq(transactions, singleton, num_day):
           #else:
           #print(dict_counters[i+1])
           dict_counters[i+1][tuple(sorted(el))] += 1 / len(transactions) #TODO NB: non si può mettere /len(transactions alla fine perché ci derve la freq in riga 357
-  '''print('Time to find frequent topics:')
+  print('Time to find frequent topics:')
   time_topics = time.time() - start_time
-  print("--- %s seconds ---" % time_topics)'''
+  print("--- %s seconds ---" % time_topics)
 
   dict_topic = {}
   #print(dict_counters)
   #print("-----------------------------------\n\n")
+
+  start = time.time()
   for key in dict_counters:
-    #start_time = time.time()
+
+    start_1 = time.time()
     for k, count in dropwhile(lambda key_count: key_count[1] >= 0.03, dict_counters[key].most_common()):
       del dict_counters[key][k]
     #print("ECCOLO", dict_counters[key])
     #print(dict_counters[key])
     dict_counters[key] = dict_counters[key].most_common()
-    '''print('TIME:')
-    time_topics = time.time() - start_time
-    print("--- %s seconds ---" % time_topics)'''
-    #c = 0
-    #start_time = time.time()
+    print('TIME 1:')
+    time_topics = time.time() - start_1
+    print("--- %s seconds ---" % time_topics)
+
+    start_2 = time.time()
     for el in dict_counters[key]:
-      #print("EL", el, " ", el[1])
-      #c += 1
-      #print("EL", el, " ", c)
       dict_topic[el[0]] = (el[1], round(el[1]*len(transactions)))
-    '''print('qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq:')
-    time_topics = time.time() - start_time
-    print("--- %s seconds ---" % time_topics)'''
+    print("time 2")
+    time_2 = time.time() - start_2
+    print("--- %s seconds ---" % time_2)
+
+  time_topics = time.time() - start
+  print("final time")
+  print("--- %s seconds ---" % time_topics)
   #print(dict_topic)
   #print(dict_counters)
   return dict_topic #dict_counters
