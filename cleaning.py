@@ -78,7 +78,7 @@ def to_date(date_time):
     date = date_time.date()
     return date
 
-def cleaning_fun(df_path, list_column_drop, path_cleaned, path_grouped):
+def cleaning_fun(df_path, list_column_drop, path_cleaned, path_pickle_cleaned, path_grouped, path_pickle_grouped):
     '''Given a dataset of tweets, it cleans tweets' text and it groups the cleaned tweets by date'''
 
     # read the starting dataset
@@ -130,9 +130,11 @@ def cleaning_fun(df_path, list_column_drop, path_cleaned, path_grouped):
     df.to_csv(path_cleaned, index=False, sep=' ', line_terminator='\n')
     '''df.to_csv(r'/home/veror/PycharmProjects/DataMiningProj_OK/DATASET_covid19_tweets_cleaned.csv', index=False,
               sep=' ', line_terminator='\n')'''
+    df.to_pickle(path_pickle_cleaned)
     #df1.to_csv(r'/home/veror/PycharmProjects/DataMiningProj_OK/DATASET_covid19_group_text.csv', index=False)
     #df2.to_csv(r'/home/veror/PycharmProjects/DataMiningProj_OK/DATASET_covid19_group_string.csv', index=False)
     df3.to_csv(path_grouped, index=False, sep=' ')
+    df3.to_pickle(path_pickle_grouped)
     #df3.to_csv(r'/home/veror/PycharmProjects/DataMiningProj_OK/DATASET_covid19_group_tuple.csv', index=False, sep=' ')
     #df3.to_csv(r'/home/veror/PycharmProjects/DataMiningProj_OK/DATASET_covid19_group_tuple_sep_comma.csv', index=False)
 
@@ -141,8 +143,8 @@ def cleaning_fun(df_path, list_column_drop, path_cleaned, path_grouped):
          '/home/veror/PycharmProjects/DataMiningProj_OK/PROVA_CLEANING.csv', '/home/veror/PycharmProjects/DataMiningProj_OK/PROVA_GROUPED.csv')
 '''
 
-
-
+'''df.to_pickle('data/pickle_dataset')
+df = pd.read_pickle('data/pickle_dataset')'''
 
 
 
