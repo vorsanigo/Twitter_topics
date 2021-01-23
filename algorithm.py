@@ -2,6 +2,7 @@ import pandas as pd
 from efficient_apriori import apriori
 import pickle
 from mlxtend.frequent_patterns import fpgrowth
+from mlxtend.frequent_patterns import apriori as mlxtend_apriori
 from mlxtend.preprocessing import TransactionEncoder
 import time
 from collections import Counter
@@ -121,12 +122,14 @@ print(val1)'''
 #-------------------------------------------------------------------------------------------------------------------
 # EFFICIENT APRIORI
 # TODO CHANGE PARAMETERS, THINK ABOUT ASSOCIATION RULES
-def eff_apriori_fun(transactions_string, singleton): # , min_sup, min_conf, min_len, min_lift, len_rule
-  '''Given a transaction from the dataset (set of cleaned tweets of a single day) and the indication for singleton
+def eff_apriori_fun(transactions, singleton, num_day): # , min_sup, min_conf, min_len, min_lift, len_rule
+  '''Given transactions from the dataset (set of cleaned tweets of a single day) and the indication for singleton
   results, it returns a dictionary containing the frequent topics and their frequency and number of occurrrences,
   obtained by applying efficient_apriori on the transaction -> {topic: (freq, num_occ), ...}'''
 
-  transactions = pd.eval(transactions_string)
+  print("Finding frequent topics on day", num_day)
+  print("Number of tweets:", len(transactions))
+  #transactions = pd.eval(transactions_string)
   #print(len(transactions))
   #transactions = transactions_string
   itemsets, rules = apriori(transactions, min_support=0.03, min_confidence=0.7) # , output_transaction_ids=True
@@ -154,21 +157,22 @@ def eff_apriori_fun(transactions_string, singleton): # , min_sup, min_conf, min_
   else:
     for key in itemsets:
       for el in itemsets[key]:
-        dict_topic[el] = itemsets[key][el]/len(transactions), itemsets[key][el] # topic: (freq, tot num)
+        dict_topic[el] = itemsets[key][el]/len(transactions), itemsets[key][el] # topic: (freq, tot num)'''
 
   return dict_topic
 
 # In this version we consider the association rule as method to filter the results, so we only consider itemsets of 2
 # or more items and we consider only high correlation between the terms
 # TODO min_confidence: 0.6/0.7/0.8 forse le migliori ??
-def eff_apriori_rules_fun(transactions_string): # , min_sup, min_conf, min_len, min_lift, len_rule
+def eff_apriori_rules_fun(transactions, num_day): # , min_sup, min_conf, min_len, min_lift, len_rule
   '''Given a transaction from the dataset (set of cleaned tweets of a single day) it returns a dictionary containing
   the frequent topics and their frequency and confidence of the related association rule, obtained by applying
   efficient_apriori on the transaction and considering only sets from which it is possible to derive an association
   rules with confidence above the threshold -> {topic: [freq, confidence], ...}'''
 
-  transactions = pd.eval(transactions_string)
-  print(len(transactions))
+  #transactions = pd.eval(transactions_string)
+  print("Finding frequent topics on day", num_day)
+  print("Number of tweets:", len(transactions))
   #transactions = transactions_string
   itemsets, rules = apriori(transactions, min_support=0.03, min_confidence=0.7) # , output_transaction_ids=True
   dict_topic = {}
@@ -181,44 +185,47 @@ def eff_apriori_rules_fun(transactions_string): # , min_sup, min_conf, min_len, 
     print(rule)  # Prints the rule and its confidence, support, lift, ...'''
   #print(itemsets)
 
-  '''list_itemsets = []
+  list_itemsets = []
   list_freq = []
   for key in itemsets:
     for el in itemsets[key]:
       list_itemsets.append(el)
-      list_freq.append(itemsets[key][el])'''
+      list_freq.append(itemsets[key][el])
 
-  '''dict_topic = {}
+  dict_topic = {}
   for key in itemsets:
     for el in itemsets[key]:
       dict_topic[el] = itemsets[key][el], itemsets[key][el]/len(transactions) # topic: (tot num, freq)
-  '''
+
   return dict_topic
 
-def mlx_apriori_fun(transactions_string, singleton):
+def mlx_apriori_fun(transactions, singleton, num_day):
   '''Given a transaction from the dataset (set of cleaned tweets of a single day) and the indication for singleton
   results, it returns a dictionary containing the frequent topics and their frequency and number of occurrrences,
   obtained by applying mlx_apriori on the transaction -> {topic: (freq, num_occ), ...}'''
 
+  print("Finding frequent topics on day", num_day)
+  print("Number of tweets:", len(transactions))
+
   te = TransactionEncoder()
 
-  transactions = pd.eval(transactions_string)
+  #transactions = pd.eval(transactions_string)
 
   te_ary = te.fit(transactions).transform(transactions)
   df1 = pd.DataFrame(te_ary, columns=te.columns_)
-  print("-------------")
+  #print("-------------")
   #print(df1)
 
   res = fpgrowth(df1, min_support=0.03, use_colnames=True)
   #print(res)
 
-  print("TYPEEEEEEEEEEEEEEEEEE", type(res))
+  #print("TYPEEEEEEEEEEEEEEEEEE", type(res))
   list_itemsets = res['itemsets'].tolist()
   list_support = res['support'].tolist()
-  print(list_support)
-  print(list_itemsets)
+  #print(list_support)
+  #print(list_itemsets)
   tot_list = list(zip(list_itemsets, list_support))
-  print(tot_list)
+  #print(tot_list)
   dict_topic = {}
   if singleton == 0:
     for el in tot_list:
@@ -231,14 +238,16 @@ def mlx_apriori_fun(transactions_string, singleton):
   return(dict_topic)
 
 # HERE: ALL THE POSSIBLE L -> only until 4, since more there is a problem with memory -> loop for all the cases
-def naive_fun(transactions_string, singleton):
+def naive_fun(transactions, singleton, num_day):
   '''Given a transaction from the dataset (set of cleaned tweets of a single day) and the indication for singleton
   results, it returns a dictionary containing the frequent topics (as top-k) and their frequency and number of
   occurrrences, obtained by computing the possible combinations of terms in a naive way -> {topic: (freq, num_occ), ...}'''
 
-  transactions = pd.eval(transactions_string)
+  #transactions = pd.eval(transactions_string)
   #transactions = transactions_string
-  print(len(transactions))
+  print("Finding frequent topics on day", num_day)
+  print("Number of tweets:", len(transactions))
+
   dict_counters = {}
   #tuples_1 = Counter()
   #tuples_2 = Counter()
@@ -252,7 +261,7 @@ def naive_fun(transactions_string, singleton):
   for sub in transactions:
     #if len(transactions) < 2:
       #continue
-    sub.sort()
+    list(sub).sort()
     #for i in range(len(sub)): # TODO così non funzionaaaaa perché ci sono troppe combinazioni
     for i in len_comb: # put range(1, 4) if we want without singletons
       #print(i)
@@ -278,15 +287,18 @@ def naive_fun(transactions_string, singleton):
   return dict_topic #dict_counters
 
 
-def naive_fun_freq(transactions_string, singleton):
+def naive_fun_freq(transactions, singleton, num_day):
   '''Given a transaction from the dataset (set of cleaned tweets of a single day) and the indication for singleton
     results, it returns a dictionary containing the frequent topics (considering their freq) and their frequency and
     number of occurrrences, obtained by computing the possible combinations of terms in a naive way ->
     {topic: (freq, num_occ), ...}'''
   #start_time = time.time()
-  transactions = pd.eval(transactions_string)
+  #transactions = pd.eval(transactions_string)
   #transactions = transactions_string
-  print(len(transactions))
+
+  print("Finding frequent topics on day", num_day)
+  print("Number of tweets:", len(transactions))
+
   dict_counters = {}
   #tuples_1 = Counter()
   #tuples_2 = Counter()
@@ -298,9 +310,11 @@ def naive_fun_freq(transactions_string, singleton):
   else:
     len_comb = range(4)
   for sub in transactions:
+    #print(sub)
+    #print(type(sub))
     #if len(transactions) < 2:
       #continue
-    sub.sort()
+    list(sub).sort()
     #for i in range(len(sub)): # TODO così non funzionaaaaa perché ci sono troppe combinazioni
     for i in len_comb: # put range(1, 4) if we want without singletons
       #print(i)
@@ -341,7 +355,7 @@ def naive_fun_freq(transactions_string, singleton):
     time_topics = time.time() - start_time
     print("--- %s seconds ---" % time_topics)'''
   #print(dict_topic)
-  print(dict_counters)
+  #print(dict_counters)
   return dict_topic #dict_counters
 
 
@@ -354,20 +368,21 @@ def apply_fun(name_fun, dimension, column_dataframe, singleton): # column_datafr
   for i in range(dimension):
     #print(df_grouped['text_cleaned_tuple'].values[i])
     if name_fun == "eff_apriori_fun":
-      result = eff_apriori_fun(column_dataframe.values[i], singleton)
+      result = eff_apriori_fun(column_dataframe.values[i], singleton, i)
     elif name_fun == "eff_apriori_rules_fun":
-      result = eff_apriori_rules_fun(column_dataframe.values[i])
+      result = eff_apriori_rules_fun(column_dataframe.values[i], i)
     elif name_fun == "mlx_apriori_fun":
-      result =mlx_apriori_fun(column_dataframe.values[i], singleton)
+      result =mlx_apriori_fun(column_dataframe.values[i], singleton, i)
     elif name_fun == "naive_fun_freq":
-      result = naive_fun_freq(column_dataframe.values[i], singleton)
+      result = naive_fun_freq(column_dataframe.values[i], singleton, i)
     else:
-      result = naive_fun(column_dataframe.values[i], singleton)
+      result = naive_fun(column_dataframe.values[i], singleton, i)
     print("RESULT:", result)
+    print("\n")
     #print("\n")
     dict_day_topic["day" + str(i)] = result
   #print("\n\n\n")
-  print("DICT DAY TOPIC", dict_day_topic)
+  #print("DICT DAY TOPIC", dict_day_topic)
   return dict_day_topic
 
 # TODO LESS CHECKS
@@ -413,35 +428,6 @@ def apply_fun(name_fun, dimension, column_dataframe, singleton): # column_datafr
   print("DICT DAY TOPIC", dict_day_topic)
   return dict_day_topic'''
 
-def count_itemset(tuple_topic, transactions): # da fare nel day in cui manca la freq
-  '''Given a tuple A, and a list of tuples L, it returns how many times the tuple A is contained in the tuples of L'''
-  counter = 0
-  for tuple in transactions:
-    if set(tuple_topic).issubset(tuple):
-      counter += 1
-  return counter
-
-'''l = pd.eval(df_grouped['text_cleaned_tuple'][0])
-count = count_itemset(('covid', 'putin', 'russia'), l)
-print("COUNTER", count)'''
-
-
-# apply apriori to the tweets on each day separately, save the result in the list transactions_topics
-'''dict_day_topic = {}
-start_time = time.time()
-for i in range(10):
-  #print(df_grouped['text_cleaned_tuple'].values[i])
-  result = eff_apriori_fun(df_grouped['text_cleaned_tuple'].values[i])
-  print("RESULT:", result)
-  print("\n")
-  dict_day_topic["day"+str(i)] = result
-print("\n\n\n")
-print("DICT DAY TOPIC", dict_day_topic)
-print("\n")
-print('Time to find frequent itemset')
-print("--- %s seconds ---" % (time.time() - start_time))
-print("\n")'''
-
 # TODO 1.0) da usare con eff_apriori_fun NON calcola freq di quelli non freq
 def create_dict_topics(dict_day_topic):
   '''Given a dictionary with days and their frequent topics, it returns a tuple containing a dictionary of topics with
@@ -478,6 +464,219 @@ def create_dict_topics(dict_day_topic):
         dict_to_dataframe[topic] = (list_freq_dataset)
         list_count.append(count)
   return dict_topic_day_num, dict_to_dataframe, list_count
+
+
+
+
+
+
+#######################################################################################################################
+
+
+
+
+
+
+
+
+
+# TODO PROBABLY NOT USED
+
+def count_itemset(tuple_topic, transactions): # da fare nel day in cui manca la freq
+  '''Given a tuple A, and a list of tuples L, it returns how many times the tuple A is contained in the tuples of L'''
+  counter = 0
+  for tuple in transactions:
+    if set(tuple_topic).issubset(tuple):
+      counter += 1
+  return counter
+
+
+# TODO 2) da usare con eff_apriori_fun/eff_apriori_rules_fun -> calcola freq di quelli non freq
+# TODO VARIANTE PER POTER CONTARE LE FREQUENZE DI TUTTI -> RALLENTA MOLTO !!!!!!!!!
+# TODO FORSE NON NECESSARIO SE NON CI INTERESSA L'ANDAMENTO NEGLI ALTRI GIORNI
+# TODO MAGARI SI PUÒ MIGLIORARE, MA APRIORI FORSE NON RIDA' FREQ DI QUELLI NON FREQUENTI
+def create_dict_topics_all_freq(dict_day_topic, column_dataframe):
+  dict_topic_day_num = {}
+  dict_to_dataframe = {}
+  list_count = []
+  for day in dict_day_topic:
+    #print("D", day)
+    #print("E", dict_day_topic[day])
+    for topic in dict_day_topic[day]:
+      #print("Q", topic)
+      if not (topic in dict_topic_day_num):
+        pos = 0
+        count = 0
+        list_day = []
+        list_num = [] # TODO questa è list_confidence se si usa eff_apriori_rules_fun
+        list_freq = []
+        list_flag = []
+        #print("EEEEEEE", dict_day_topic[day].keys())
+        for day in dict_day_topic:
+          list_day.append(day)
+          if topic in dict_day_topic[day].keys():
+            count += 1
+            list_num.append(dict_day_topic[day][topic][1]) # TODO questa è list_confidence se si usa eff_apriori_rules_fun
+            list_freq.append(dict_day_topic[day][topic][0])
+            list_flag.append('freq')
+            #print("DDDDDDDD", dict_day_topic[day][topic])
+          else:
+            transactions_string = column_dataframe[pos] #df_grouped['text_cleaned_tuple'][pos]
+            transactions = pd.eval(transactions_string)
+            num = count_itemset(topic, transactions_string)
+            list_num.append(num)
+            list_freq.append(num/len(transactions))
+            list_flag.append('not_freq')
+            #list_num.append("not freq")
+            #list_freq.append("not freq")
+          pos += 1
+        dict_topic_day_num[topic] = (count, list(zip(list_day, list_num, list_freq, list_flag))) # TODO list_num è list_confidence se si usa eff_apriori_rules_fun
+        dict_to_dataframe[topic] = (list_freq)
+        list_count.append(count)
+        #print("DICT TOPIC DAY NUM", dict_topic_day_num)
+  return dict_topic_day_num, dict_to_dataframe, list_count
+
+
+'''df_grouped = pd.read_csv("/home/veror/PycharmProjects/DataMiningProj_OK/data/covid_grouped.csv", sep=' ')
+column_dataframe = df_grouped['text_cleaned_tuple']
+apply_fun('eff_apriori_fun', 11, column_dataframe, 0)'''
+
+
+def mlx_apriori_new(date, transactions):
+  '''Given a transaction from the dataset (set of cleaned tweets of a single day) and the indication for singleton
+  results, it returns a dictionary containing the frequent topics and their frequency and number of occurrrences,
+  obtained by applying mlx_apriori on the transaction -> {topic: (freq, num_occ), ...}'''
+
+  te = TransactionEncoder()
+  #print("ssssssssssssss")
+  #transactions = pd.eval(transactions_string)
+  print("qqqqqqqqqqqqqqqqqqqqqqq")
+  te_ary = te.fit(transactions).transform(transactions)
+  df1 = pd.DataFrame(te_ary, columns=te.columns_)
+  print("-------------")
+  #print(df1)
+
+  print("STARRT")
+  res = mlxtend_apriori(df1, min_support=0.03, use_colnames=True)
+  print("FINISH", res)
+
+  #print("TYPEEEEEEEEEEEEEEEEEE", type(res))
+  print(res['itemsets'])
+  list_itemsets = res['itemsets'].tolist()
+  list_support = res['support'].tolist()
+  print(list_support)
+  print(list_itemsets)
+  '''tot_list = list(zip(list_itemsets, list_support))
+  print(tot_list)'''
+  '''dict_day_topics = {}
+  for i in range(len(list_itemsets)):
+  if singleton == 0:
+    for el in tot_list:
+      if len(el) > 1:
+        dict_topic[el[0]] = (el[1], el[1]*len(transactions))
+  else:
+    for el in tot_list:
+      dict_topic[el[0]] = (el[1], el[1]*len(transactions))'''
+
+  return(date, list(zip(list_itemsets, list_support)))
+
+def eff_apriori_new(transactions, day, singleton): # , min_sup, min_conf, min_len, min_lift, len_rule
+  '''Given a transaction from the dataset (set of cleaned tweets of a single day) and the indication for singleton
+  results, it returns a dictionary containing the frequent topics and their frequency and number of occurrrences,
+  obtained by applying efficient_apriori on the transaction -> {topic: (freq, num_occ), ...}'''
+
+  #transactions = pd.eval(transactions_string)
+  #print(len(transactions))
+  #transactions = transactions_string
+  itemsets, rules = apriori(transactions, min_support=0.03, min_confidence=0.7) # , output_transaction_ids=True
+  #for rule in rules:
+    #print(rule)
+    #print(rule.rhs + rule.lhs)
+  '''rules_rhs = filter(lambda rule: len(rule.lhs) == 2 and len(rule.rhs) == 1, rules)
+  for rule in sorted(rules_rhs, key=lambda rule: rule.lift):
+    print(rule)  # Prints the rule and its confidence, support, lift, ...'''
+  #print(itemsets)
+
+  '''list_itemsets = []
+  list_freq = []
+  for key in itemsets:
+    for el in itemsets[key]:
+      list_itemsets.append(el)
+      list_freq.append(itemsets[key][el])'''
+  print(itemsets)
+  dict_topic = {}
+  if singleton == 0:
+    for key in itemsets:
+      for el in itemsets[key]:
+        if len(el) > 1:
+          dict_topic[el] = itemsets[key][el]/len(transactions), itemsets[key][el] # topic: (freq, tot num)
+  else:
+    for key in itemsets:
+      for el in itemsets[key]:
+        dict_topic[el] = itemsets[key][el]/len(transactions), itemsets[key][el] # topic: (freq, tot num)'''
+
+  return (day, dict_topic)
+
+def apply_fun_new(name_fun, dimension, column_dataframe, column_date, singleton): # column_dataframe = df_grouped['text_cleaned_tuple']
+  '''Given a function to find frequent topics, it applies the function on all the transactions in the related column of
+  the dataset and returns, for eac day, the frequent topics with their frequency and number of occurrrences ->
+  {day0: {topic1_0: (freq, num_occ), topic2_0: (...)}, day1: {topic1_1: (freq, num_occ), ...}, ...}
+  '''
+  dict_day_topic = {}
+  for i in range(dimension):
+    #print(df_grouped['text_cleaned_tuple'].values[i])
+    if name_fun == "eff_apriori_fun":
+      result = eff_apriori_new(column_dataframe.values[i], column_date[i], singleton)
+    elif name_fun == "eff_apriori_rules_fun":
+      result = eff_apriori_rules_fun(column_dataframe.values[i])
+    elif name_fun == "mlx_apriori_fun":
+      result = mlx_apriori_fun(column_dataframe.values[i], singleton)
+    elif name_fun == "naive_fun_freq":
+      result = naive_fun_freq(column_dataframe.values[i], singleton)
+    elif name_fun == "mlx_apriori_new":
+      result = mlx_apriori_new(column_date.values[i], column_dataframe.values[i])
+    else:
+      result = naive_fun(column_dataframe.values[i], singleton)
+    print("RESULT:", result)
+    #print("\n")
+    dict_day_topic[result[0]] = result[1]
+  #print("\n\n\n")
+  print("DICT DAY TOPIC", dict_day_topic)
+  return dict_day_topic
+
+def create_dict_topics_new(dict_day_topic):
+  dict_topic_day_freq = {}
+  print("day", dict_day_topic)
+  for day in dict_day_topic:
+    for topic in dict_day_topic[day]:
+      print(topic)
+      if not (topic in dict_topic_day_freq):
+        dict_topic_day_freq[topic] = []
+      dict_topic_day_freq[topic].append((day, dict_day_topic[day][topic]))
+  return dict_topic_day_freq
+
+'''start = time.time()
+df = pd.read_pickle('data/covid_input')
+column_date = df['date_only']
+column_dataframe = df['text_cleaned_tuple']
+res = apply_fun('eff_apriori_fun', 25, column_dataframe, 0)
+res_1 = create_dict_topics(res)
+print(res_1)
+end = time.time() - start
+print("TIME", end)'''
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 ######################################################################################################################
 # ALSO SINGLETON
@@ -837,107 +1036,7 @@ print(df_eff_apriori)
 #print(sorted(df_eff_apriori['Unnamed: 0']))
 '''
 ######################################################################################################################
-# TODO QUESTA E' UGUALE A QUELLA SOPRA 1.0
-# TODO 1.1) da usare con eff_apriori_rules_fun (considera itemsets freq con dimensione > 1) e NON calcola freq di quelli non freq
-'''def create_dict_topics_tuple(dict_day_topic):
-  dict_topic_day_num = {}
-  dict_to_dataframe = {}
-  list_count = []
-  for day in dict_day_topic:
-    #print("D", day)
-    #print("E", dict_day_topic[day])
-    for topic in dict_day_topic[day]:
-      #print("Q", topic)
-      if not (topic in dict_topic_day_num):
-        count = 0
-        list_day = []
-        list_num = []
-        list_freq = []
-        list_freq_dataset = []
-        #print("EEEEEEE", dict_day_topic[day].keys())
-        for day in dict_day_topic:
-          list_day.append(day)
-          if topic in dict_day_topic[day].keys():
-            count += 1
-            list_num.append(dict_day_topic[day][topic][1])
-            list_freq.append(dict_day_topic[day][topic][0])
-            list_freq_dataset.append(dict_day_topic[day][topic][0])
-            #print("DDDDDDDD", dict_day_topic[day][topic])
-          else:
-            list_num.append("not freq")
-            list_freq.append("not freq")
-            list_freq_dataset.append("")
-        dict_topic_day_num[topic] = (count, list(zip(list_day, list_num, list_freq)))
-        dict_to_dataframe[topic] = (list_freq_dataset)
-        list_count.append(count)
-  return dict_topic_day_num, dict_to_dataframe, list_count'''
 
-# eff_apriori_rules_fun
-'''apply_fun_res_2 = apply_fun('eff_apriori_rules_fun', 3, column_dataframe)
-print(apply_fun_res_2)'''
-
-'''create_dict_topics_tuple_res = create_dict_topics_tuple(apply_fun_res_2)
-print("create_dict_topics_tuple_res[0]", create_dict_topics_tuple_res[0])
-print("create_dict_topics_tuple[1]", create_dict_topics_tuple_res[1])
-print("create_dict_topics_tuple_res[2]", create_dict_topics_tuple_res[2])
-
-df_topics = pd.DataFrame.from_dict(create_dict_topics_tuple_res[1], orient='index', columns=list_date[:3])
-df_topics["Number of occurrences"] = create_dict_topics_tuple_res[2]
-print(df_topics)'''
-
-
-'''print("DICT_TOPIC_DAY_NUM", dict_topic_day_num)
-
-dataframe = pd.DataFrame.from_dict(dict_to_dataframe, orient='index')
-print(dataframe)'''
-'''x = {'a': [10, [1, 0.2], [2, 0.3]], 'b': [10, [1, 0.2], [2, 0.3]]}
-dataframe = pd.DataFrame.from_dict(x, orient='index', columns=['number', 'occurrences, frequence, day0', 'day1'])
-print(dataframe)'''
-
-# TODO 2) da usare con eff_apriori_fun/eff_apriori_rules_fun -> calcola freq di quelli non freq
-# TODO VARIANTE PER POTER CONTARE LE FREQUENZE DI TUTTI -> RALLENTA MOLTO !!!!!!!!!
-# TODO FORSE NON NECESSARIO SE NON CI INTERESSA L'ANDAMENTO NEGLI ALTRI GIORNI
-# TODO MAGARI SI PUÒ MIGLIORARE, MA APRIORI FORSE NON RIDA' FREQ DI QUELLI NON FREQUENTI
-def create_dict_topics_all_freq(dict_day_topic, column_dataframe):
-  dict_topic_day_num = {}
-  dict_to_dataframe = {}
-  list_count = []
-  for day in dict_day_topic:
-    #print("D", day)
-    #print("E", dict_day_topic[day])
-    for topic in dict_day_topic[day]:
-      #print("Q", topic)
-      if not (topic in dict_topic_day_num):
-        pos = 0
-        count = 0
-        list_day = []
-        list_num = [] # TODO questa è list_confidence se si usa eff_apriori_rules_fun
-        list_freq = []
-        list_flag = []
-        #print("EEEEEEE", dict_day_topic[day].keys())
-        for day in dict_day_topic:
-          list_day.append(day)
-          if topic in dict_day_topic[day].keys():
-            count += 1
-            list_num.append(dict_day_topic[day][topic][1]) # TODO questa è list_confidence se si usa eff_apriori_rules_fun
-            list_freq.append(dict_day_topic[day][topic][0])
-            list_flag.append('freq')
-            #print("DDDDDDDD", dict_day_topic[day][topic])
-          else:
-            transactions_string = column_dataframe[pos] #df_grouped['text_cleaned_tuple'][pos]
-            transactions = pd.eval(transactions_string)
-            num = count_itemset(topic, transactions_string)
-            list_num.append(num)
-            list_freq.append(num/len(transactions))
-            list_flag.append('not_freq')
-            #list_num.append("not freq")
-            #list_freq.append("not freq")
-          pos += 1
-        dict_topic_day_num[topic] = (count, list(zip(list_day, list_num, list_freq, list_flag))) # TODO list_num è list_confidence se si usa eff_apriori_rules_fun
-        dict_to_dataframe[topic] = (list_freq)
-        list_count.append(count)
-        #print("DICT TOPIC DAY NUM", dict_topic_day_num)
-  return dict_topic_day_num, dict_to_dataframe, list_count
 
 # with eff_apriori_fun'''
 '''create_dict_topics_all_freq_res = create_dict_topics_all_freq(apply_fun_res_1, column_dataframe)
@@ -1265,96 +1364,3 @@ print("--- %s seconds ---" % (time.time() - start_time))'''
 
 
 
-'''itemsets, rules = apriori(pickle_topics, min_support=0.6, min_confidence=0.66)
-
-rules_rhs = filter(lambda rule: len(rule.lhs) == 2 and len(rule.rhs) == 1, rules)
-for rule in sorted(rules_rhs, key=lambda rule: rule.lift):
-  print(rule)  # Prints the rule and its confidence, support, lift, ...
-print(itemsets)'''
-
-'''transactions = [[('covid',), ('coronaviru',), ('pandem',), ('trump',)], [('covid',), ('coronaviru',), ('death',), ('case',), ('test',)], [('covid',), ('case',)]]
-
-itemsets, rules = apriori(transactions, min_support=0.3, min_confidence=0.66)
-
-rules_rhs = filter(lambda rule: len(rule.lhs) == 2 and len(rule.rhs) == 1, rules)
-for rule in sorted(rules_rhs, key=lambda rule: rule.lift):
-  print(rule)  # Prints the rule and its confidence, support, lift, ...
-print(itemsets)'''
-
-# TODO EFFICIENT APRIORI
-
-# first -> identify rules
-'''itemsets, rules = apriori(transactions, min_support=0.01, min_confidence=0.66)
-
-rules_rhs = filter(lambda rule: len(rule.lhs) == 2 and len(rule.rhs) == 1, rules)
-for rule in sorted(rules_rhs, key=lambda rule: rule.lift):
-  print(rule)  # Prints the rule and its confidence, support, lift, ...
-print(itemsets)
-print('------------------------------------------------------------------------')'''
-
-# second -> identify frequent itemsets
-#itemsets, rules = apriori(transactions, output_transaction_ids=False)
-#print(itemsets)
-# {1: {('bacon',): ItemsetCount(itemset_count=3, members={0, 1, 2}), ...
-
-'''# experiments on "COPY_covid19_tweets_cleaned_2.csv"
-df = pd.read_csv("COPY_covid19_tweets_cleaned_2 .csv")
-y = df.iloc[23]['text_cleaned']
-print(type(y))
-print(tuple(y))'''
-#df['tuple_text_cleaned'] = df['text_cleaned'].apply(lambda x: print(x))
-
-#transactions_from_df = [tuple(row) for row in df[['text_cleaned']].values]
-
-#print(transactions_from_df[0], transactions_from_df[1], transactions_from_df[2])
-
-
-# EXPERIMENT APRIORI ON CLEANED DATA
-
-'''file_eff_apriori = open('pickle_INPUT_list_of_tuple', 'rb')
-input_eff_apriori = pickle.load(file_eff_apriori)
-#print(input_eff_apriori)
-
-#associations = apriori(observations, min_length = 2, min_support = 0.2, min_confidence = 0.2, min_lift = 3)
-# first -> identify rules
-itemsets, rules = apriori(input_eff_apriori, min_support=0.01, min_confidence=0.5)
-
-rules_rhs = filter(lambda rule: len(rule.lhs) == 2 and len(rule.rhs) == 1, rules)
-for rule in sorted(rules_rhs, key=lambda rule: rule.lift):
-  print(rule)  # Prints the rule and its confidence, support, lift, ...
-print(itemsets)
-
-print('------------------------------------------------------------------------')
-
-# second -> identify frequent itemsets
-itemsets, rules = apriori(input_eff_apriori, output_transaction_ids=True)
-print(itemsets)
-# {1: {('bacon',): ItemsetCount(itemset_count=3, members={0, 1, 2}), ...
-'''
-
-
-
-
-
-
-'''transactions = [('eggs', 'bacon', 'soup'),
-                ('eggs', 'bacon', 'apple', 'pen', 'soup'),
-                ('soup', 'bacon', 'banana', 'cucumber', 'vodka', 'soup')]
-
-#associations = apriori(observations, min_length = 2, min_support = 0.2, min_confidence = 0.2, min_lift = 3)
-# first -> identify rules
-itemsets, rules = apriori(transactions, min_support=0.3, min_confidence=0.5, output_transaction_ids=True)
-
-rules_rhs = filter(lambda rule: len(rule.lhs) == 2 and len(rule.rhs) == 1, rules)
-for rule in sorted(rules_rhs, key=lambda rule: rule.lift):
-  print(rule)  # Prints the rule and its confidence, support, lift, ...
-print(itemsets)
-
-print('------------------------------------------------------------------------')
-
-# second -> identify frequent itemsets
-itemsets, rules = apriori(transactions, output_transaction_ids=True)
-print(rules)
-print(itemsets)
-# {1: {('bacon',): ItemsetCount(itemset_count=3, members={0, 1, 2}), ...'''
-# TODO END EFFICIENT APRIORI
