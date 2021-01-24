@@ -174,8 +174,9 @@ def eff_apriori_rules_fun(transactions, num_day): # , min_sup, min_conf, min_len
   print("Finding frequent topics on day", num_day)
   print("Number of tweets:", len(transactions))
   #transactions = transactions_string
-  itemsets, rules = apriori(transactions, min_support=0.03, min_confidence=0.7) # , output_transaction_ids=True
+  itemsets, rules = apriori(transactions, min_support=0.015, min_confidence=0.6) # , output_transaction_ids=True
   dict_topic = {}
+  print("Association rules:\n")
   for rule in rules:
     print(rule)
     itemset = sorted(rule.rhs + rule.lhs)
@@ -185,17 +186,17 @@ def eff_apriori_rules_fun(transactions, num_day): # , min_sup, min_conf, min_len
     print(rule)  # Prints the rule and its confidence, support, lift, ...'''
   #print(itemsets)
 
-  list_itemsets = []
+  '''list_itemsets = []
   list_freq = []
   for key in itemsets:
     for el in itemsets[key]:
       list_itemsets.append(el)
-      list_freq.append(itemsets[key][el])
+      list_freq.append(itemsets[key][el])'''
 
-  dict_topic = {}
+  '''dict_topic = {}
   for key in itemsets:
     for el in itemsets[key]:
-      dict_topic[el] = itemsets[key][el], itemsets[key][el]/len(transactions) # topic: (tot num, freq)
+      dict_topic[el] = itemsets[key][el]/len(transactions), itemsets[key][el] '''# topic: (tot num, freq)
 
   return dict_topic
 
