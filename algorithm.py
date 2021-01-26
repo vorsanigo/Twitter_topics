@@ -49,7 +49,6 @@ from itertools import dropwhile
 # TODO RAGGRUPPARE PER DATA I TOPIC FREQUENTI COME FATTO PER EFFICIENT APRIORI ----> ok manca solo per mlx apriori
 
 
-
 # Here we apply the efficient-apriori on the cleaned tweets for each day separately to find, for each day, the frequent
 # topics, given by the frequent itemsets of terms, then we check the frequence of each of them on the total number of days
 
@@ -139,7 +138,7 @@ def eff_apriori_fun(transactions, singleton, num_day): # , min_sup, min_conf, mi
   '''rules_rhs = filter(lambda rule: len(rule.lhs) == 2 and len(rule.rhs) == 1, rules)
   for rule in sorted(rules_rhs, key=lambda rule: rule.lift):
     print(rule)  # Prints the rule and its confidence, support, lift, ...'''
-  #print(itemsets)
+  #print("iiiiiiiii", itemsets)
 
   '''list_itemsets = []
   list_freq = []
@@ -174,7 +173,7 @@ def eff_apriori_rules_fun(transactions, num_day): # , min_sup, min_conf, min_len
   print("Finding frequent topics on day", num_day)
   print("Number of tweets:", len(transactions))
   #transactions = transactions_string
-  itemsets, rules = apriori(transactions, min_support=0.015, min_confidence=0.6) # , output_transaction_ids=True
+  itemsets, rules = apriori(transactions, min_support=0.03, min_confidence=0.7) # , output_transaction_ids=True
   dict_topic = {}
   print("Association rules:\n")
   for rule in rules:
@@ -184,7 +183,7 @@ def eff_apriori_rules_fun(transactions, num_day): # , min_sup, min_conf, min_len
   '''rules_rhs = filter(lambda rule: len(rule.lhs) == 2 and len(rule.rhs) == 1, rules)
   for rule in sorted(rules_rhs, key=lambda rule: rule.lift):
     print(rule)  # Prints the rule and its confidence, support, lift, ...'''
-  #print(itemsets)
+  print("iiiiiii", itemsets)
 
   '''list_itemsets = []
   list_freq = []
@@ -278,7 +277,9 @@ def naive_fun(transactions, singleton, num_day):
   dict_topic = {}
   for key in dict_counters:
     #print("ECCOLO", dict_counters[key].most_common(20))
+    #dict_counters[key].sort(key=lambda x: x[0])
     dict_counters[key] = dict_counters[key].most_common(10)
+    print("LUIIIIII", dict_counters[key])
     #c = 0
     for el in dict_counters[key]:
       #c += 1
