@@ -15,7 +15,9 @@ from nltk.tokenize import TweetTokenizer
 import pickle
 from datetime import datetime
 
-
+df = pd.read_pickle('/home/veror/PycharmProjects/DataMiningProj_OK/data/australia_input')
+print(df)
+#df.to_csv('/home/veror/PycharmProjects/DataMiningProj_OK/data/australia_group.csv', sep=' ')
 # CLEANING FROM https://towardsdatascience.com/basic-tweet-preprocessing-in-python-efd8360d529e
 # AND https://www.kaggle.com/ragnisah/text-data-cleaning-tweets-analysis
 
@@ -146,9 +148,8 @@ def cleaning_fun(df_path, list_column_drop, path_cleaned, path_pickle_cleaned, p
 '''df.to_pickle('data/pickle_dataset')
 df = pd.read_pickle('data/pickle_dataset')'''
 
-
-
-
+'''df = pd.read_pickle("/home/veror/PycharmProjects/DataMiningProj_OK/data/covid_input")
+print(df)'''
 
 
 
