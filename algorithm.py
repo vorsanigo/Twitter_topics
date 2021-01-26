@@ -10,113 +10,8 @@ from itertools import combinations
 from itertools import dropwhile
 
 # -*- coding: utf-8 -*-
-# TODO input utente: numero di topic restituiti, magari lunghezza topic ----> OK
-
-# TODO sistemare funzioni mettendo variabili come parametri (es: lunghezza lista delle date) ----------> OK
-
-# TODO sistemare e mettere tutte le cose in ordine ----> PARZILMENTE OK
-
-# TODO FARE RUN CON TUTTE LE FREQUENZE PER FARE GRAFICI
-
-# TODO tenere anche singleton? 2 opzioni:
-# TODO usare le association rules / modificare codice e tenere solo se non singleton
-
-# TODO considerare le association rules?
-
-# TODO threshold e' ok così basso? fare test con anche un poco piu' alto, ma si perdono cose
-
-# TODO confrontare prestazioni naive e apriori -> minor numero di comparazioni, usa threshold invece di top-k (???), se
-# TODO si dovessero guardare tutte le possibili combinazioni con naive necessiterebbe troppo tempo, ci fermiamo a length = 4
-
-# TODO scegliere altri dataset (sottoinsieme? altri?)
-
-# TODO capire perche' teniamo anche le parole molto frequenti -> la correlazione con gli altri non è casuale in questo modo?
-# TODO oppure no perche' anche se frequenti sempre nel periodo sono importanti, dato che se troviamo putin insieme a covid significa che
-# TODO il topic riguarda sia covid che putin
-
-# TODO capire se tenere tutte le frequenze per fare i grafici
-
-# TODO scegliere quali grafici fare, quali topic tenere
-
-# TODO creare altri pickle file per fare esperimenti comodi
-
-# TODO fare test utente
-
-# TODO calcolare tempi e prestazioni -> capire quando approccio apriori funziona bene
-
-
-# TODO CAPIRE PERCHE' ALCUNI ITEMSETS LI CONTA IN NUMERO != USANDO LE FZ != ------> forse ok
-# TODO RAGGRUPPARE PER DATA I TOPIC FREQUENTI COME FATTO PER EFFICIENT APRIORI ----> ok manca solo per mlx apriori
-
-
 # Here we apply the efficient-apriori on the cleaned tweets for each day separately to find, for each day, the frequent
 # topics, given by the frequent itemsets of terms, then we check the frequence of each of them on the total number of days
-
-# read cleaned dataframe -> not useful
-'''df_1 = pd.read_csv("/home/veror/PycharmProjects/DataMiningProj_OK/res_naive_fun_normal.csv", sep=',')
-print(df_1)
-x = sorted(list(df_1. iloc[:, 0]))
-
-df_2 = pd.read_csv("/home/veror/PycharmProjects/DataMiningProj_OK/res_naive_fun_normal_1111111111.csv", sep=',')
-print(df_2)
-y = sorted(list(df_2. iloc[:, 0]))
-
-print("164", x)
-print("165", y)
-
-main_list = list(set(x) - set(y))
-main_list_1 = list(set(y) - set(x))
-
-print("si 164 no 165", main_list)
-print(len(main_list))
-print("si 165 no 164", main_list_1)
-print((len(main_list_1)))
-'''
-
-#print(df)
-#print("----------------------")
-
-# read dataframe grouped by day
-'''df_grouped = pd.read_csv("/home/veror/PycharmProjects/DataMiningProj_OK/DATASET_covid19_group_tuple.csv", sep=' ')
-#print(dff)
-print("----------------------")
-list_date = df_grouped['date_only'].tolist()
-
-column_dataframe = df_grouped['text_cleaned_tuple']'''
-
-'''df_grouped = pd.read_csv("/home/veror/PycharmProjects/DataMiningProj_OK/DATASET_AUSTRALIA_group_tuple.csv", sep=' ')
-#print(dff)
-print("----------------------")
-list_date = df_grouped['date_only'].tolist()
-print(list_date)
-print(len(list_date))
-column_dataframe = df_grouped['text_cleaned_tuple']
-print(df_grouped.shape[0])'''
-
-# TODO decidere dove metterlo
-'''start_time = time.time()
-print('Time to find frequent itemset')
-print("--- %s seconds ---" % (time.time() - start_time))'''
-
-#print(df_grouped['text_cleaned_tuple'][0])
-'''df.drop([])
-df11 = df_grouped.head()
-print(df11)
-
-df2 = df[:1]
-print(df2)'''
-
-'''dff1 = pd.read_csv("/home/veror/PycharmProjects/DataMiningProj_OK/DATASET_covid19_group_tuple_sep_comma.csv")
-#print(dff1)
-print("----------------------")'''
-
-'''transactions = pd.eval(df_grouped['text_cleaned_tuple'].values[0])
-transactions_string = df_grouped['text_cleaned_tuple'].values[0]
-#print(transactions)
-print(type(transactions))
-print("----------------------")
-val1 = dff1['text_cleaned_tuple'].values[0]
-print(val1)'''
 
 #-------------------------------------------------------------------------------------------------------------------
 # EFFICIENT APRIORI
@@ -129,23 +24,13 @@ def eff_apriori_fun(transactions, singleton, num_day): # , min_sup, min_conf, mi
   print("Finding frequent topics on day", num_day)
   print("Number of tweets:", len(transactions))
   #transactions = pd.eval(transactions_string)
-  #print(len(transactions))
   #transactions = transactions_string
   itemsets, rules = apriori(transactions, min_support=0.03, min_confidence=0.7) # , output_transaction_ids=True
   #for rule in rules:
-    #print(rule)
     #print(rule.rhs + rule.lhs)
   '''rules_rhs = filter(lambda rule: len(rule.lhs) == 2 and len(rule.rhs) == 1, rules)
   for rule in sorted(rules_rhs, key=lambda rule: rule.lift):
     print(rule)  # Prints the rule and its confidence, support, lift, ...'''
-  #print("iiiiiiiii", itemsets)
-
-  '''list_itemsets = []
-  list_freq = []
-  for key in itemsets:
-    for el in itemsets[key]:
-      list_itemsets.append(el)
-      list_freq.append(itemsets[key][el])'''
 
   dict_topic = {}
   if singleton == 0:
@@ -180,22 +65,6 @@ def eff_apriori_rules_fun(transactions, num_day): # , min_sup, min_conf, min_len
     print(rule)
     itemset = sorted(rule.rhs + rule.lhs)
     dict_topic[tuple(itemset)] = [rule.support, rule.confidence]
-  '''rules_rhs = filter(lambda rule: len(rule.lhs) == 2 and len(rule.rhs) == 1, rules)
-  for rule in sorted(rules_rhs, key=lambda rule: rule.lift):
-    print(rule)  # Prints the rule and its confidence, support, lift, ...'''
-  print("iiiiiii", itemsets)
-
-  '''list_itemsets = []
-  list_freq = []
-  for key in itemsets:
-    for el in itemsets[key]:
-      list_itemsets.append(el)
-      list_freq.append(itemsets[key][el])'''
-
-  '''dict_topic = {}
-  for key in itemsets:
-    for el in itemsets[key]:
-      dict_topic[el] = itemsets[key][el]/len(transactions), itemsets[key][el] '''# topic: (tot num, freq)
 
   return dict_topic
 
@@ -213,19 +82,13 @@ def mlx_apriori_fun(transactions, singleton, num_day):
 
   te_ary = te.fit(transactions).transform(transactions)
   df1 = pd.DataFrame(te_ary, columns=te.columns_)
-  #print("-------------")
-  #print(df1)
 
   res = fpgrowth(df1, min_support=0.03, use_colnames=True)
-  #print(res)
 
-  #print("TYPEEEEEEEEEEEEEEEEEE", type(res))
   list_itemsets = res['itemsets'].tolist()
   list_support = res['support'].tolist()
-  #print(list_support)
-  #print(list_itemsets)
+
   tot_list = list(zip(list_itemsets, list_support))
-  #print(tot_list)
   dict_topic = {}
   if singleton == 0:
     for el in tot_list:
@@ -249,44 +112,25 @@ def naive_fun(transactions, singleton, num_day):
   print("Number of tweets:", len(transactions))
 
   dict_counters = {}
-  #tuples_1 = Counter()
-  #tuples_2 = Counter()
-  #tuples_3 = Counter()
-  #tuples_4 = Counter()
-  #dict_counters[1] = Counter()
   if singleton == 0:
     len_comb = range(1, 4)
   else:
     len_comb = range(4)
   for sub in transactions:
-    #if len(transactions) < 2:
-      #continue
     list(sub).sort()
     #for i in range(len(sub)): # TODO così non funzionaaaaa perché ci sono troppe combinazioni
     for i in len_comb: # put range(1, 4) if we want without singletons
-      #print(i)
       if not (i+1 in dict_counters.keys()):
         dict_counters[i+1] = Counter()
       for el in combinations(set(sub), i+1):
         if len(el) == len(set(el)):
-          #if not (el in dict_count.keys()):
-            #dict_count[el] = 1 / len(transactions)
-          #else:
-          #print(dict_counters[i+1])
           dict_counters[i+1][tuple(sorted(el))] += 1 #/ len(transactions) #TODO#########################################################
   dict_topic = {}
   for key in dict_counters:
-    #print("ECCOLO", dict_counters[key].most_common(20))
-    #dict_counters[key].sort(key=lambda x: x[0])
     dict_counters[key] = dict_counters[key].most_common(10)
-    print("LUIIIIII", dict_counters[key])
-    #c = 0
     for el in dict_counters[key]:
-      #c += 1
-      #print("EL", el, " ", c)
-      #dict_topic[el[0]] = (el[1]/len(transactions), el[1])
       dict_topic[el[0]] = (el[1] / len(transactions), el[1])
-  #print(dict_topic)
+
   return dict_topic #dict_counters
 
 
@@ -296,7 +140,7 @@ def naive_fun_freq(transactions, singleton, num_day):
     number of occurrrences, obtained by computing the possible combinations of terms in a naive way ->
     {topic: (freq, num_occ), ...}'''
 
-  start_time = time.time()
+  #start_time = time.time()
   #transactions = pd.eval(transactions_string)
   #transactions = transactions_string
 
@@ -304,20 +148,12 @@ def naive_fun_freq(transactions, singleton, num_day):
   print("Number of tweets:", len(transactions))
 
   dict_counters = {}
-  #tuples_1 = Counter()
-  #tuples_2 = Counter()
-  #tuples_3 = Counter()
-  #tuples_4 = Counter()
-  #dict_counters[1] = Counter()
+
   if singleton == 0:
     len_comb = range(1, 4)
   else:
     len_comb = range(4)
   for sub in transactions:
-    #print(sub)
-    #print(type(sub))
-    #if len(transactions) < 2:
-      #continue
     list(sub).sort()
     #for i in range(len(sub)): # TODO così non funzionaaaaa perché ci sono troppe combinazioni
     for i in len_comb: # put range(1, 4) if we want without singletons
@@ -331,13 +167,11 @@ def naive_fun_freq(transactions, singleton, num_day):
           #else:
           #print(dict_counters[i+1])
           dict_counters[i+1][tuple(sorted(el))] += 1 / len(transactions) #TODO NB: non si può mettere /len(transactions alla fine perché ci derve la freq in riga 357
-  print('Time to find frequent topics:')
-  time_topics = time.time() - start_time
-  print("--- %s seconds ---" % time_topics)
+  #print('Time to find frequent topics:')
+  #time_topics = time.time() - start_time
+  #print("--- %s seconds ---" % time_topics)
 
   dict_topic = {}
-  #print(dict_counters)
-  #print("-----------------------------------\n\n")
 
   start = time.time()
   for key in dict_counters:
@@ -345,25 +179,22 @@ def naive_fun_freq(transactions, singleton, num_day):
     start_1 = time.time()
     for k, count in dropwhile(lambda key_count: key_count[1] >= 0.03, dict_counters[key].most_common()):
       del dict_counters[key][k]
-    #print("ECCOLO", dict_counters[key])
-    #print(dict_counters[key])
     dict_counters[key] = dict_counters[key].most_common()
-    print('TIME 1:')
-    time_topics = time.time() - start_1
-    print("--- %s seconds ---" % time_topics)
+    #print('TIME 1:')
+    #time_topics = time.time() - start_1
+    #print("--- %s seconds ---" % time_topics)
 
-    start_2 = time.time()
+    #start_2 = time.time()
     for el in dict_counters[key]:
       dict_topic[el[0]] = (el[1], round(el[1]*len(transactions)))
-    print("time 2")
-    time_2 = time.time() - start_2
-    print("--- %s seconds ---" % time_2)
+    #print("time 2")
+    #time_2 = time.time() - start_2
+    #print("--- %s seconds ---" % time_2)
 
-  time_topics = time.time() - start
-  print("final time")
-  print("--- %s seconds ---" % time_topics)
-  #print(dict_topic)
-  #print(dict_counters)
+  #time_topics = time.time() - start
+  #print("final time")
+  #print("--- %s seconds ---" % time_topics)
+
   return dict_topic #dict_counters
 
 
@@ -374,7 +205,6 @@ def apply_fun(name_fun, dimension, column_dataframe, singleton): # column_datafr
   '''
   dict_day_topic = {}
   for i in range(dimension):
-    #print(df_grouped['text_cleaned_tuple'].values[i])
     if name_fun == "eff_apriori_fun":
       result = eff_apriori_fun(column_dataframe.values[i], singleton, i)
     elif name_fun == "eff_apriori_rules_fun":
@@ -387,10 +217,7 @@ def apply_fun(name_fun, dimension, column_dataframe, singleton): # column_datafr
       result = naive_fun(column_dataframe.values[i], singleton, i)
     print("RESULT:", result)
     print("\n")
-    #print("\n")
     dict_day_topic["day" + str(i)] = result
-  #print("\n\n\n")
-  #print("DICT DAY TOPIC", dict_day_topic)
   return dict_day_topic
 
 # TODO LESS CHECKS
@@ -445,17 +272,13 @@ def create_dict_topics(dict_day_topic):
   dict_to_dataframe = {}
   list_count = []
   for day in dict_day_topic:
-    #print("D", day)
-    #print("E", dict_day_topic[day])
     for topic in dict_day_topic[day]:
-      #print("Q", topic)
       if not (topic in dict_topic_day_num):
         count = 0
         list_day = []
         list_num = []
         list_freq = []
         list_freq_dataset = []
-        #print("EEEEEEE", dict_day_topic[day].keys())
         for day in dict_day_topic:
           list_day.append(day)
           if topic in dict_day_topic[day].keys():
@@ -463,7 +286,6 @@ def create_dict_topics(dict_day_topic):
             list_num.append(dict_day_topic[day][topic][1])
             list_freq.append(dict_day_topic[day][topic][0])
             list_freq_dataset.append(dict_day_topic[day][topic][0])
-            #print("DDDDDDDD", dict_day_topic[day][topic])
           else:
             list_num.append("not freq")
             list_freq.append("not freq")
