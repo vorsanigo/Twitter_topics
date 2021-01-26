@@ -1,6 +1,10 @@
 import algorithm
 import pandas as pd
 import time
+import numpy as np
+
+
+
 
 # TODO RESULTS SAVED WITH ' ' SEPARATOR IN APRIORI RESULTS ROW 100 OF THIS SCRIPT, BUT THE ONES IN RESULTS HAVE STILL ,
 #  -> IF WE RUN LOT_TOPICS WE NEED TO CHANGE SEP IN ROW 5 OF PLOT_TOPICS.PY
@@ -23,20 +27,22 @@ import time
 def input_user():
     '''Function to get parameters from the user to execute the algorithm to find frequent topics'''
 
-    topics_singletons = 2
-    type_algorithm = 3
+    topics_singletons = 100
+    type_algorithm = 100
 
     dataset = input("Select the dataset where you want to find frequent topics:")
     '''if len(dataset) >= 4 and not (dataset[-4:] == '.csv'):
         dataset = dataset + '.csv'''
-    #df = pd.read_csv(dataset, sep=' ')
-    #print(df)
+
+    '''df_grouped = pd.read_pickle(dataset)
+    num_date = df_grouped.shape[0]'''
+
     print("\nDATASET ACQUIRED")
 
     topics_number = int(input("\nSelect how many frequent topics you want are returned, type 0 if you want all the possible ones:"))
 
-    while(type_algorithm != 0 and type_algorithm != 1 and type_algorithm != 2):
-        type_algorithm = int(input("\nSelect the number of the algorithm you want to apply:\n0 - baseline algorithm\n1 - apriori-based algorithm\n2 - apriori-based algorithms with association rules\nType:"))
+    while(type_algorithm != 1 and type_algorithm != 2 and type_algorithm != 3 and type_algorithm != 4):
+        type_algorithm = int(input("\nSelect the number of the algorithm you want to apply:\n1 - apriori-based algorithm\n2 - apriori-based algorithms with association rules\n3 - baseline algorithm frequency\n4 - baseline algorithm top-k\nType:"))
 
     if type_algorithm != 2:
         while (topics_singletons != 0 and topics_singletons != 1):
@@ -61,20 +67,30 @@ def run_algorithm():
     #print(num_date)
     #print(num_date[2])
     #if input_res['topics_singletons'] == 1: # yes singletons
-
+    '''max, min = -1, -1
+    ans = input("\nDo you want to get only the popular topics in a certain number of days? [y/n]")
+    if ans == 'y' or ans == 'Y':
+        while ((max < 1 or min < 1)  or (max > num_date or min > num_date)  or max < min):
+            max = int(input("Write the maximum number of days in which you want the popular topics appear, remember that the total number of days is " + str(num_date) + ":"))
+            min = int(input("Write the minimum number of days in which you want the popular topics appear, remember that the total number of days is " + str(num_date) + ":"))
+    '''
     print("\n\nSTART SEARCHING FOR TOPICS\n")
     start_time = time.time()
 
-    if input_res['type_algorithm'] == 0:
-        # run naive
-        apply_fun_res = algorithm.apply_fun('naive_fun_freq', num_date, column_dataframe,
-                                            input_res['topics_singletons'])  # todo scegliere se freq o no
-    elif input_res['type_algorithm'] == 1: # apriori yes singletons
+    if input_res['type_algorithm'] == 1:
         # run eff_apriori
         apply_fun_res = algorithm.apply_fun('eff_apriori_fun', num_date, column_dataframe, input_res['topics_singletons'])
-    else:
+    elif input_res['type_algorithm'] == 2:
         # run eff_apriori_rules
         apply_fun_res = algorithm.apply_fun('eff_apriori_rules_fun', num_date, column_dataframe, input_res['topics_singletons'])
+    elif input_res['type_algorithm'] == 3:
+        # run naive frequency
+        apply_fun_res = algorithm.apply_fun('naive_fun_freq', num_date, column_dataframe,
+                                            input_res['topics_singletons'])  # todo scegliere se freq o no
+    else:
+        # run naive top-k
+        apply_fun_res = algorithm.apply_fun('naive_fun', num_date, column_dataframe,
+                                            input_res['topics_singletons'])  # todo scegliere se freq o no
 
     # compute result
     res = algorithm.create_dict_topics(apply_fun_res)
@@ -94,23 +110,39 @@ def run_algorithm():
     print("--- %s seconds ---" % time_topics)
     print("\n")
 
+
     # save result into folder results
-    if input_res['type_algorithm'] == 0:
-        result.to_csv('results/algorithm_result_naive.csv', sep=',')
-        f = open("results/time_naive.txt", 'w')
-        f.write("Time naive: " + str(time_topics))
-        f.close()
-    elif input_res['type_algorithm'] == 1:
+    if input_res['type_algorithm'] == 1:
         result.to_csv('results/algorithm_result_apriori.csv', sep=',')
         f = open("results/time_apriori.txt", 'w')
         f.write("Time apriori: " + str(time_topics))
         f.close()
-    else:
+    elif input_res['type_algorithm'] == 2:
         result.to_csv('results/algorithm_result_apriori_rules.csv', sep=',')
         f = open("results/time_apriori_rules.txt", 'w')
         f.write("Time apriori rules: " + str(time_topics))
         f.close()
-    return result
+    elif input_res['type_algorithm'] == 3:
+        result.to_csv('results/algorithm_result_naive_freq.csv', sep=',')
+        f = open("results/time_naive_freq.txt", 'w')
+        f.write("Time naive with frequency: " + str(time_topics))
+        f.close()
+    else:
+        result.to_csv('results/algorithm_result_naive_top_k.csv', sep=',')
+        f = open("results/time_naive_top_k.txt", 'w')
+        f.write("Time naive with top-k: " + str(time_topics))
+        f.close()
+
+    print(time_topics)
+    '''desired_width = 320
+
+    pd.set_option('display.width', desired_width)
+
+    #np.set_printoption(linewidth=desired_width)
+
+    pd.set_option('display.max_columns', 31)
+    print(result)'''
+    return result, time_topics
 
 # RUN PROGRAM
 print(run_algorithm())
