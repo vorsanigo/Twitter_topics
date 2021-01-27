@@ -12,12 +12,9 @@ nltk.download
 nltk.download('wordnet')
 nltk.download('stopwords')
 from nltk.tokenize import TweetTokenizer
-import pickle
 from datetime import datetime
 
-df = pd.read_pickle('/home/veror/PycharmProjects/DataMiningProj_OK/data/australia_input')
-print(df)
-#df.to_csv('/home/veror/PycharmProjects/DataMiningProj_OK/data/australia_group.csv', sep=' ')
+
 # CLEANING FROM https://towardsdatascience.com/basic-tweet-preprocessing-in-python-efd8360d529e
 # AND https://www.kaggle.com/ragnisah/text-data-cleaning-tweets-analysis
 
@@ -26,6 +23,7 @@ print(df)
 
 ps = nltk.PorterStemmer()
 stopword = nltk.corpus.stopwords.words('english')
+
 
 # Different functions to have the cleaned text in different possible forms
 
@@ -69,16 +67,16 @@ def clean_text_tuple(text):
     text_tuple = tuple(text)
     return text_tuple
 
+
 def to_date(date_time):
     '''Given a date_time, it returns a date'''
     # split following datetime format in the dataset
-    # TODO SPECIAL THIS LINE
     #date_time_obj = datetime.strptime(date_time, '%Y-%m-%d %H:%M:%S')
     # date from datetime object
     #date = date_time_obj.date()
-    # TODO END SPECIAL THIS LINE
     date = date_time.date()
     return date
+
 
 def cleaning_fun(df_path, list_column_drop, path_cleaned, path_pickle_cleaned, path_grouped, path_pickle_grouped):
     '''Given a dataset of tweets, it cleans tweets' text and it groups the cleaned tweets by date'''
@@ -90,15 +88,14 @@ def cleaning_fun(df_path, list_column_drop, path_cleaned, path_pickle_cleaned, p
     df.drop(list_column_drop, axis=1, inplace=True)
     #df.drop(['user_name', 'user_location', 'user_description', 'user_created', 'user_followers', 'user_friends',
     #         'user_favourites', 'user_verified', 'source', 'is_retweet'], axis=1, inplace=True)
-    #print(df.shape[1])
+
+    # for australian dataset
     if df.shape[1] == 2:
         df.columns = ['date', 'text']
 
-    # TODO SPECIAL
     # convert to datetime and drop dates with not correct format
     df['date'] = pd.to_datetime(df['date'], format='%Y-%m-%d %H:%M:%S', errors='coerce')
     df = df[pd.notnull(df['date'])]
-    # TODO END SPECIAL
 
     #segmenter using the word statistics from Twitter
     # TODO PROBABLY TO ELIMINATE
@@ -108,7 +105,7 @@ def cleaning_fun(df_path, list_column_drop, path_cleaned, path_pickle_cleaned, p
 
     # step 1: preprocess tweets
     # tweet-preprocessor package deals with URLs, mentions, reserved words, emojis, smileys, we keep only hashtags
-    p.set_options(p.OPT.URL, p.OPT.MENTION, p.OPT.RESERVED, p.OPT.EMOJI, p.OPT.SMILEY, p.OPT.NUMBER) # keep hashtags
+    p.set_options(p.OPT.URL, p.OPT.MENTION, p.OPT.RESERVED, p.OPT.EMOJI, p.OPT.SMILEY, p.OPT.NUMBER)
     df['tweet_preprocessed'] = df['text'].apply(lambda x: p.clean(x))
 
     # step 2: apply the cleaning functions on the preprocessed tweets and save results into new columns in the dataframe
@@ -139,18 +136,6 @@ def cleaning_fun(df_path, list_column_drop, path_cleaned, path_pickle_cleaned, p
     df3.to_pickle(path_pickle_grouped)
     #df3.to_csv(r'/home/veror/PycharmProjects/DataMiningProj_OK/DATASET_covid19_group_tuple.csv', index=False, sep=' ')
     #df3.to_csv(r'/home/veror/PycharmProjects/DataMiningProj_OK/DATASET_covid19_group_tuple_sep_comma.csv', index=False)
-
-'''cleaning_fun("/home/veror/PycharmProjects/DataMiningProj_OK/DATASET_covid19_tweets.csv", ['user_name', 'user_location',
-            'user_description', 'user_created', 'user_followers', 'user_friends', 'user_favourites', 'user_verified', 'source', 'is_retweet'],
-         '/home/veror/PycharmProjects/DataMiningProj_OK/PROVA_CLEANING.csv', '/home/veror/PycharmProjects/DataMiningProj_OK/PROVA_GROUPED.csv')
-'''
-
-'''df.to_pickle('data/pickle_dataset')
-df = pd.read_pickle('data/pickle_dataset')'''
-
-'''df = pd.read_pickle("/home/veror/PycharmProjects/DataMiningProj_OK/data/covid_input")
-print(df)'''
-
 
 
 
