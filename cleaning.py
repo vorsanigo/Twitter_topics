@@ -21,6 +21,7 @@ from datetime import datetime
 # STEMMING: Working -> Work ___ it eliminates affixes from a word (stemming is faster)
 # LEMMATIZATION: Better -> Good ___ it uses vocabulary and morphological analysis of words to detect the lemma of the word (basic form)
 
+
 ps = nltk.PorterStemmer()
 stopword = nltk.corpus.stopwords.words('english')
 
@@ -98,7 +99,7 @@ def cleaning_fun(df_path, list_column_drop, path_cleaned, path_pickle_cleaned, p
     df = df[pd.notnull(df['date'])]
 
     #segmenter using the word statistics from Twitter
-    # TODO PROBABLY TO ELIMINATE
+    # TO ELIMINATE
     seg_tw = Segmenter(corpus="twitter")
 
     # CLEANING
@@ -136,135 +137,3 @@ def cleaning_fun(df_path, list_column_drop, path_cleaned, path_pickle_cleaned, p
     df3.to_pickle(path_pickle_grouped)
     #df3.to_csv(r'/home/veror/PycharmProjects/DataMiningProj_OK/DATASET_covid19_group_tuple.csv', index=False, sep=' ')
     #df3.to_csv(r'/home/veror/PycharmProjects/DataMiningProj_OK/DATASET_covid19_group_tuple_sep_comma.csv', index=False)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-'''def tot_clean_date_string(date_time, text, df):
-    cleaned_text = clean_text_string(df[text])
-    date = to_date(df[date_time])
-    return date, cleaned_text'''
-
-#df1 = df.iloc[:3]
-
-
-
-
-
-
-# clean dataset
-# df['text_cleaned'] = df['tweet_preprocessed'].apply(lambda x: clean_text(x))
-
-'''file = open('pickle_input_apriori', 'wb')
-pickle.dump(big_list, file)
-file.close()'''
-
-# LIST OF LISTS FOR APRIORI MLXTEND
-# create list of lists for apriori algorithm of python
-'''big_list = []
-for (idx, row) in df.iterrows():
-    big_list.append(clean_text(row.loc['tweet_preprocessed']))
-print(big_list)
-
-file = open('pickle_INPUT', 'wb')
-pickle.dump(big_list, file)
-file.close()'''
-
-# LIST OF TUPLES FOR APRIORI EFFICIENT_APRIORI
-# create list of tuples for apriori algorithm of python
-'''big_list = []
-for (idx, row) in df.iterrows():
-    big_list.append(clean_text_tuple(row.loc['tweet_preprocessed']))
-print(big_list)
-
-file = open('pickle_INPUT_list_of_tuple', 'wb')
-pickle.dump(big_list, file)
-file.close()'''
-
-
-
-# transform clened dataset into a csv file -> "covid19_tweets_cleaned.csv"
-# df.to_csv(r'/home/veror/PycharmProjects/DataMiningProject/covid19_tweets_cleaned_3.csv', index=False)
-
-#df['text_cleaned_list'] = df['tweet_preprocessed'].apply(lambda x: clean_text(x))
-#df['text_cleaned_string'] = df['tweet_preprocessed'].apply(lambda x: clean_text_string(x))
-#df['text_cleaned_tuple'] = df['tweet_preprocessed'].apply(lambda x: clean_text_tuple(x))
-# DATATSET WITH REMOVED HASHTAGS
-# df.to_csv(r'/home/veror/PycharmProjects/DataMiningProj_OK/DATASET_covid19_tweets_cleaned.csv', index=False)
-# DATASET WITH HASHTAGS
-#df.to_csv(r'/home/veror/PycharmProjects/DataMiningProj_OK/DATASET_covid19_tweets_cleaned_YEShashtags_CORRECT.csv', index=False)
-
-# TODO do we need to keep also # and not to cut the words in hashtags?? Or can we consider them as normal terms?
-# TODO if they are special we can take them from the column df['hashtags'] (line 38)
-
-# preprocess -> step 2
-#
-'''def preprocess_data(data):
-    # Removes Numbers
-    data = data.astype(str).str.replace('\d+', '')
-    lower_text = data.str.lower()
-    lemmatizer = nltk.stem.WordNetLemmatizer()
-    w_tokenizer = TweetTokenizer()
-
-    def lemmatize_text(text):
-      return [(lemmatizer.lemmatize(w)) for w in w_tokenizer.tokenize((text))]
-
-    def remove_punctuation(words):
-        new_words = []
-        for word in words:
-            new_word = re.sub(r'[^\w\s]', '', (word))
-            if new_word != '':
-                new_words.append(new_word)
-        return new_words
-
-    words = lower_text.apply(lemmatize_text)
-    words = words.apply(remove_punctuation)
-    return pd.DataFrame(words)
-
-# remove stopwords
-
-df['text_cleaned'] = df['tweet_preprocessed'].apply(lambda x: [item for item in x if item not in stop_words])
-
-
-
-
-# ALTRE COSE DAL SITO, FORSE INUTILI
-
-# segmenter using the word statistics from Twitter
-seg_tw = Segmenter(corpus="twitter")
-a = []
-for i in range(len(df)):
-    if df['hashtag'][i] != a
-        listToStr1 = ' '.join([str(elem) for elem in df['hashtag'][i]])
-        df.loc[i,'Segmented#'] = seg_tw.segment(listToStr1)
-
-df.to_csv(r'/home/veror/PycharmProjects/DataMiningProject/covid19_tweets_cleaned_2.csv', index=False)'''
-
-'''#Frequency of words
-fdist = FreqDist(df['Segmented#'])
-#WordCloud
-wc = WordCloud(width=800, height=400, max_words=50).generate_from_frequencies(fdist)
-plt.figure(figsize=(12,10))
-plt.imshow(wc, interpolation="bilinear")
-plt.axis("off")
-plt.show()'''
