@@ -13,7 +13,7 @@ terms that appear together in a tweet. Here, in particular, the considered case 
    1) `pandas 1.2.1`
    2) `efficient-apriori 1.1.1`
   
-### 2) Default execution by command line
+### 2) Default execution with execution.py script:
 
 NB: in this execution the apriori methods (with or without association rules) can be run and the parameters are already set:
 1) support threshold = 0.03
@@ -21,7 +21,7 @@ NB: in this execution the apriori methods (with or without association rules) ca
 3) only topics with at least 2 terms are returned
 4) only topics frequent in at least 2 days are returned
    
-### 3) Execution with execution.py script:
+#### Execution 
 1) Open the terminal and navigate to the `bin` directory, where there is a script named `execution.py`
 2) Run the `.py` script: the command on the terminal is `python execution.py arg`
     arg  
