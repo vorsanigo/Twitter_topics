@@ -1,28 +1,8 @@
 import algorithm
 import pandas as pd
 import time
-import numpy as np
 
-
-
-
-# TODO RESULTS SAVED WITH ' ' SEPARATOR IN APRIORI RESULTS ROW 100 OF THIS SCRIPT, BUT THE ONES IN RESULTS HAVE STILL ,
-#  -> IF WE RUN LOT_TOPICS WE NEED TO CHANGE SEP IN ROW 5 OF PLOT_TOPICS.PY
-
-
-
-# -*- coding: utf-8 -*-
-# TODO ESPERIMENTI CON FZ: APRIORI, APRIORI_RULES, NAIVE (FEQ O TOP_KEY?)
-# TODO GRAFICO DI QUALCUNO -> OK
-# TODO CONSIDERARE QUELLI FREQUENTI SOLO IN UN GIORNO? MAGARI NO/SI -> ARGOMENTARE
-# TODO magari togliere parole super frequenti?
-# TODO QUALI ALTRI ESPERIMENTI FARE? ALTRO DATASET, SOTTOPORZIONI DI DATASET? ANALISI STATISTICHE?
-# TODO COME USARE L'UTENTE?
-# TODO REPORT
-
-
-
-# TODO per semplicita' lasciare i dataset possibili nella stessa cartella, cosi non necessita il path
+# per semplicita' lasciare i dataset possibili nella stessa cartella, cosi non necessita il path
 # accetta sia .csv che senza perche lo aggiunge lui
 def input_user():
     '''Function to get parameters from the user to execute the algorithm to find frequent topics'''
@@ -145,7 +125,7 @@ def run_algorithm():
     return result, time_topics
 
 # RUN PROGRAM
-print(run_algorithm())
+#print(run_algorithm())
 print("\nTHE OUTPUT IS IN THE FOLDER bin/results")
 
 
