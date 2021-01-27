@@ -40,6 +40,7 @@ def input_user():
     print("\nDATASET ACQUIRED")
 
     num_date = df_grouped.shape[0]
+
     max_num, min_num = -1, -1
     ans = input("\nDo you want to get only the popular topics in a certain number of days? [y/n]")
     if ans == 'y' or ans == 'Y':
@@ -51,7 +52,7 @@ def input_user():
     topics_number = int(input("\nSelect how many frequent topics (at most) you want are returned, type 0 if you want all the possible ones:"))
 
     while(type_algorithm != 1 and type_algorithm != 2 and type_algorithm != 3 and type_algorithm != 4):
-        type_algorithm = int(input("\nSelect the number of the algorithm you want to apply:\n1 - apriori-based algorithm\n2 - apriori-based algorithms with association rules\n3 - baseline algorithm frequency\n4 - baseline algorithm top-k\nType:"))
+        type_algorithm = int(input("\nSelect the number of the algorithm you want to apply:\n1 - apriori-based algorithm\n2 - apriori-based algorithms with association rules\n3 - baseline: naive algorithm frequency\n4 - baseline: naive algorithm top-k\nType:"))
 
     if type_algorithm != 2:
         while (topics_singletons != 0 and topics_singletons != 1):
@@ -143,7 +144,6 @@ def run_algorithm():
         f.write("Time naive with top-k: " + str(time_topics))
         f.close()
 
-    print(time_topics)
     '''desired_width = 320
 
     pd.set_option('display.width', desired_width)
