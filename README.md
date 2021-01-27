@@ -54,8 +54,6 @@ NB: in this execution the apriori methods (with or without association rules) ca
    1) arg = 0: run apriori method without considering association rules
    2) arg = 1: run apriori method considering association rules 
     
-
-
 Example: `python execution.py 0` returns the popular topics by applying the apriori method without association rules
 
 ### 4) Execution as user with main.py script
@@ -67,7 +65,7 @@ NB: in this execution both the baseline and apriori methods can be run, the foll
 #### Execution:
 1) Open the terminal and navigate to the `bin` directory, where there is a script named `main.py`
 2) Run the `.py` script: the command on the terminal is `python main.py`
-3) When the program asks to select the dataset, write `data/covid_input` (other datasets could be used)
+3) When the program asks to select the dataset, write `covid_input` (other datasets could be used)
 4) Follow the instructions given by the program to set different parameters:
    1) Maximum and minimum number of days in which the returned topics must be popular
    2) Total number of results to be returned
