@@ -39,7 +39,7 @@ NB: in this execution both the baseline and apriori methods can be run, the foll
 1) frequency/support threshold = 0.03
 2) confidence threshold = 0.7
    
-#### 5) Execution:
+#### Execution:
 1) Open the terminal and navigate to the `bin` directory, where there is a script named `main.py`
 2) Run the `.py` script: the command on the terminal is `python main.py`
 3) When the program asks to select the dataset, write `data/covid_input` (other datasets could be used)
@@ -48,10 +48,8 @@ NB: in this execution both the baseline and apriori methods can be run, the foll
    2) Total number of results to be returned
    3) Type of solution method to use to find popular topics
    4) If consider or not topics composed by just one term (singletons)
-   
-
-
-### Input and output
+    
+### 5) Input and output
 
 - INPUT: the program takes as input a cleaned dataset where tweets are grouped by date, which is a pickle file with path
   `data/covid_input`. It is possible to use also other cleaned datasets with tweets grouped by date with the following format:
