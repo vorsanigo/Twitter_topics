@@ -1,14 +1,6 @@
 # CLEANING FROM https://towardsdatascience.com/basic-tweet-preprocessing-in-python-efd8360d529e
 # AND https://www.kaggle.com/ragnisah/text-data-cleaning-tweets-analysis
 
-# TODO NB !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-# TODO output -> DATASET_covid19_tweets_cleaned_NOhashtags.csv -> with list, string, tuples cleaned text and NO hashtags (in a separated column)
-# TODO output -> DATASET_covid19_tweets_cleaned_NOhashtags.csv -> with list, string, tuples cleaned text and YES hashtags
-
-# TODO this second cleaning file (cleaning_1.py) seems better then cleaning_NOT_correct.py
-
-# TODO choose if we want stemming (probably better avoid lemmatization), now we used stemming in this code
 # STEMMING: Working -> Work ___ it eliminates affixes from a word (stemming is faster)
 # LEMMATIZATION: Better -> Good ___ it uses vocabulary and morphological analysis of words to detect the lemma of the word (basic form)
 
