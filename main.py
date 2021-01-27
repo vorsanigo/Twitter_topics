@@ -1,8 +1,28 @@
 import algorithm
 import pandas as pd
 import time
+import numpy as np
 
-# per semplicita' lasciare i dataset possibili nella stessa cartella, cosi non necessita il path
+
+
+
+# TODO RESULTS SAVED WITH ' ' SEPARATOR IN APRIORI RESULTS ROW 100 OF THIS SCRIPT, BUT THE ONES IN RESULTS HAVE STILL ,
+#  -> IF WE RUN LOT_TOPICS WE NEED TO CHANGE SEP IN ROW 5 OF PLOT_TOPICS.PY
+
+
+
+# -*- coding: utf-8 -*-
+# TODO ESPERIMENTI CON FZ: APRIORI, APRIORI_RULES, NAIVE (FEQ O TOP_KEY?)
+# TODO GRAFICO DI QUALCUNO -> OK
+# TODO CONSIDERARE QUELLI FREQUENTI SOLO IN UN GIORNO? MAGARI NO/SI -> ARGOMENTARE
+# TODO magari togliere parole super frequenti?
+# TODO QUALI ALTRI ESPERIMENTI FARE? ALTRO DATASET, SOTTOPORZIONI DI DATASET? ANALISI STATISTICHE?
+# TODO COME USARE L'UTENTE?
+# TODO REPORT
+
+
+
+# TODO per semplicita' lasciare i dataset possibili nella stessa cartella, cosi non necessita il path
 # accetta sia .csv che senza perche lo aggiunge lui
 def input_user():
     '''Function to get parameters from the user to execute the algorithm to find frequent topics'''
@@ -16,19 +36,29 @@ def input_user():
 
     '''df_grouped = pd.read_pickle(dataset)
     num_date = df_grouped.shape[0]'''
-
+    df_grouped = pd.read_pickle(dataset)  # dataset
     print("\nDATASET ACQUIRED")
 
-    topics_number = int(input("\nSelect how many frequent topics you want are returned, type 0 if you want all the possible ones:"))
+    num_date = df_grouped.shape[0]
+
+    max_num, min_num = -1, -1
+    ans = input("\nDo you want to get only the popular topics in a certain number of days? [y/n]")
+    if ans == 'y' or ans == 'Y':
+        while ((max_num < 1 or min_num < 1)  or (max_num > num_date or min_num > num_date)  or max_num < min_num):
+            max_num = int(input("Select the maximum and minimum number of days (between 1 and " + str(num_date) + ") in which you want the popular topics appear:\nMAX:"))
+            min_num = int(input("MIN:"))
+            #min = int(input("Write the minimum number of days in which you want the popular topics appear, remember that the total number of days is " + str(num_date) + ":"))
+
+    topics_number = int(input("\nSelect how many frequent topics (at most) you want are returned, type 0 if you want all the possible ones:"))
 
     while(type_algorithm != 1 and type_algorithm != 2 and type_algorithm != 3 and type_algorithm != 4):
-        type_algorithm = int(input("\nSelect the number of the algorithm you want to apply:\n1 - apriori-based algorithm\n2 - apriori-based algorithms with association rules\n3 - baseline algorithm frequency\n4 - baseline algorithm top-k\nType:"))
+        type_algorithm = int(input("\nSelect the number of the algorithm you want to apply:\n1 - apriori-based algorithm\n2 - apriori-based algorithms with association rules\n3 - baseline: naive algorithm frequency\n4 - baseline: naive algorithm top-k\nType:"))
 
     if type_algorithm != 2:
         while (topics_singletons != 0 and topics_singletons != 1):
             topics_singletons = int(input("\nSelect:\n0 - if you do NOT want topics with only one term\n1 - if you want also topics with only one term\nType:"))
 
-    return {'dataset': dataset, 'topics_number': topics_number, 'topics_singletons': topics_singletons, 'type_algorithm': type_algorithm}
+    return {'dataset': df_grouped, 'topics_number': topics_number, 'topics_singletons': topics_singletons, 'type_algorithm': type_algorithm, 'max': max_num, 'min': min_num}
 #res = input_user()
 
 
@@ -38,7 +68,7 @@ def run_algorithm():
 
     input_res = input_user()
 
-    df_grouped = pd.read_pickle(input_res['dataset']) # dataset
+    df_grouped = input_res['dataset']
     column_dataframe = df_grouped['text_cleaned_tuple']
     list_date = df_grouped['date_only'].tolist()
     #print(list_date)
@@ -47,13 +77,7 @@ def run_algorithm():
     #print(num_date)
     #print(num_date[2])
     #if input_res['topics_singletons'] == 1: # yes singletons
-    '''max, min = -1, -1
-    ans = input("\nDo you want to get only the popular topics in a certain number of days? [y/n]")
-    if ans == 'y' or ans == 'Y':
-        while ((max < 1 or min < 1)  or (max > num_date or min > num_date)  or max < min):
-            max = int(input("Write the maximum number of days in which you want the popular topics appear, remember that the total number of days is " + str(num_date) + ":"))
-            min = int(input("Write the minimum number of days in which you want the popular topics appear, remember that the total number of days is " + str(num_date) + ":"))
-    '''
+
     print("\n\nSTART SEARCHING FOR TOPICS\n")
     start_time = time.time()
 
@@ -78,8 +102,15 @@ def run_algorithm():
     df_topics = pd.DataFrame.from_dict(res[1], orient='index', columns=list_date[:num_date])
     df_topics["Number_of_occurrences"] = res[2]
     # sort dataframe of results by descendent frequence of topics
-    sorted_df_topics = df_topics.sort_values(by='Number_of_occurrences', ascending=False)
+
+    if not(input_res['max'] == -1 or input_res['min'] == -1):
+        pruned_df_topics = df_topics[(df_topics["Number_of_occurrences"] >= input_res['min']) & (df_topics["Number_of_occurrences"] <= input_res['max'])]
+    else:
+        pruned_df_topics = df_topics[df_topics["Number_of_occurrences"] >= 2]
+
+    sorted_df_topics = pruned_df_topics.sort_values(by='Number_of_occurrences', ascending=False)
     # cut results according to user's request
+
     if not (input_res['topics_number'] == 0):
         result = sorted_df_topics.head(input_res['topics_number'])
     else:
@@ -113,7 +144,6 @@ def run_algorithm():
         f.write("Time naive with top-k: " + str(time_topics))
         f.close()
 
-    print(time_topics)
     '''desired_width = 320
 
     pd.set_option('display.width', desired_width)
@@ -122,10 +152,10 @@ def run_algorithm():
 
     pd.set_option('display.max_columns', 31)
     print(result)'''
-    return result, time_topics
+    return result
 
 # RUN PROGRAM
-#print(run_algorithm())
+print(run_algorithm())
 print("\nTHE OUTPUT IS IN THE FOLDER bin/results")
 
 
