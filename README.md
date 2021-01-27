@@ -3,6 +3,33 @@
 The aim of this project is to find popular topics over time in a dataset of tweets. A topic is composed by a set of
 terms that appear together in a tweet. Here, in particular, the considered case is the COVID19 dataset.
 
+## Structure
+
+### Folders
+
+- `doc` contains the report about the project with the explanation of the solution and the experimental part 
+- `src` contains the source code of the project
+- `data` contains the datasets
+- `bin` contains the files to execute the program
+
+### Datasets
+
+Two datasets have been considered (the second one to support the evaluation of the solution):
+1) COVID19 dataset containing tweets between 24-07-2020 and 30-08-2020 about covid
+2) Australian election 2019 dataset containing tweets between 10-05-2020 and 20-05-2020
+
+After the cleaning we obtain datasets where tweets are grouped by date.
+
+### Solution method
+
+2 methods (each with 2 variants) have been evaluated (the first ones as baseline, the last ones as solution):
+1) Baseline:
+   - Naive with top-k approach
+   - Naive with frequency
+2) Apriori approach:
+   - Efficient apriori
+   - Efficient apriori with association rules
+
 ## Execution
 
 ### 1) Prerequisites
@@ -57,34 +84,7 @@ NB: in this execution both the baseline and apriori methods can be run, the foll
       - `text_cleaned_tuple` containing the tweets as a list of tuples
 - OUTPUT: it is stored in `bin/results` as a `csv` file 
 
-## Structure
 
-### Folders
-
-- `doc` contains the report about the project with the explanation of the solution and the experimental part 
-- `src` contains the source code of the project
-- `data` contains the datasets
-- `bin` contains the files to execute the program
-
-### Datasets
-
-Two datasets have been considered (the second one to support the evaluation of the solution):
-1) COVID19 dataset containing tweets between 24-07-2020 and 30-08-2020 about covid
-2) Australian election 2019 dataset containing tweets between 10-05-2020 and 20-05-2020
-
-After the cleaning we obtain as input datasets where tweets are grouped by date.
-
-### Solution method
-
-2 methods (each with 2 variants) have been evaluated (the first ones as baseline, the last ones as solution):
-1) Baseline:
-   - Naive with top-k approach
-   - Naive with frequency
-2) Apriori approach:
-   - Efficient apriori
-   - Efficient apriori with association rules
-
-It will be possible to notice that the apriori approach has much better performances.
 
 
 
