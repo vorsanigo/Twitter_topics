@@ -50,7 +50,7 @@ NB: in this execution the apriori methods (with or without association rules) ca
    
 #### Execution 
 1) Open the terminal and navigate to the `bin` directory, where there is a script named `execution.py`
-2) Run the `.py` script: the command on the terminal is `python execution.py arg` (`arg` is the external varaible passed to the script via the command line):
+2) Run the `.py` script: the command on the terminal is `python execution.py arg` (`arg` is the external variable passed to the script via the command line):
    1) arg = 0: run apriori method without considering association rules
    2) arg = 1: run apriori method considering association rules 
     
