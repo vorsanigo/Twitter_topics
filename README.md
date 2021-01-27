@@ -23,15 +23,13 @@ NB: in this execution the apriori methods (with or without association rules) ca
    
 #### Execution 
 1) Open the terminal and navigate to the `bin` directory, where there is a script named `execution.py`
-2) Run the `.py` script: the command on the terminal is `python execution.py arg`
-    arg  
+2) Run the `.py` script: the command on the terminal is `python execution.py arg` (`arg` is the external varaible passed to the script via the command line):
+   1) arg = 0: run apriori method without considering association rules
+   2) arg = 1: run apriori method considering association rules 
+    
 
 
-
-Run the `.py` script: in the command prompt the command is the following `python program.py arg`
-    - `arg` is the external parameter to be passed to the script via the command line. It represents the number of itemsets we want the solution to return, so it **must** be a number. If you want all possible itemsets, enter 0.
-
-    Example: `python program.py 50` will return the 50 most frequent itemset in time, based on the total number of dates in which the itemset is present.  
+Example: `python execution.py 0` returns the popular topics by applying the apriori method without association rules
 
 ### 4) Execution as user with main.py script
 
