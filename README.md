@@ -1,6 +1,4 @@
-# Twitter_topics
-
----
+# Data mining project: Twitter topics over time
 
 The aim of this project is to find popular topics over time in a dataset of tweets. A topic is composed by a set of
 terms that appear together in a tweet. Here, in particular, the considered case is the COVID19 dataset.
