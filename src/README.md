@@ -16,7 +16,7 @@ terms that appear together in a tweet. Here, in particular, the considered case 
 
 Two datasets have been considered (the second one to support the evaluation of the solution):
 1) COVID19 dataset containing tweets between 24-07-2020 and 30-08-2020 about covid
-2) Australian election 2019 dataset containing tweets between 10-05-2020 and 20-05-2020
+2) Australian election 2019 dataset containing tweets between 10-05-2020 and 20-05-2020 about Australian elections
 
 After the cleaning we obtain datasets where tweets are grouped by date.
 
