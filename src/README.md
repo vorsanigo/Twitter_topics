@@ -78,8 +78,8 @@ NB: in this execution both the baseline and apriori methods can be run, the foll
     
 ### 5) Input and output
 
-- INPUT: the program takes as input a cleaned dataset where tweets are grouped by date, which is a pickle file with path
-  `data/covid_input`. It is possible to use also other cleaned datasets with tweets grouped by date with the following format:
+- INPUT: the program takes as input a cleaned dataset where tweets are grouped by date, which is a pickle file named
+  `covid_input`. It is possible to use also other cleaned datasets with tweets grouped by date with the following format:
   - it must be a `pickle` file 
   - 2 columns:
       - `date_only` containing the dates in format YY-MM-DD
