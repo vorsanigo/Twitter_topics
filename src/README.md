@@ -10,7 +10,7 @@ terms that appear together in a tweet. Here, in particular, the considered case 
 - `doc` contains the report about the project with the explanation of the solution and the experimental part 
 - `src` contains the source code of the project
 - `data` contains the datasets
-- `bin` contains the files to execute the program
+- `bin` contains the files to execute the program and the results of the experimental evaluation
 
 ### Datasets
 
