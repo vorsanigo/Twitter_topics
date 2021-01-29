@@ -1,12 +1,12 @@
 import pandas as pd
 from efficient_apriori import apriori
-from mlxtend.frequent_patterns import fpgrowth
-from mlxtend.frequent_patterns import apriori as mlxtend_apriori
-from mlxtend.preprocessing import TransactionEncoder
 from collections import Counter
 from itertools import combinations
 from itertools import dropwhile
 
+#from mlxtend.frequent_patterns import fpgrowth
+#from mlxtend.frequent_patterns import apriori as mlxtend_apriori
+#from mlxtend.preprocessing import TransactionEncoder
 
 # -*- coding: utf-8 -*-
 # Different methods to find popular topics
@@ -67,10 +67,10 @@ def eff_apriori_rules_fun(transactions, num_day):
   return dict_topic
 
 
-def mlx_apriori_fun(transactions, singleton, num_day):
-  '''Given a transaction from the dataset (set of cleaned tweets of a single day) and the indication for singleton
-  results, it returns a dictionary containing the frequent topics and their frequency and number of occurrrences,
-  obtained by applying mlx_apriori on the transaction -> {topic: (freq, num_occ), ...}'''
+'''def mlx_apriori_fun(transactions, singleton, num_day):
+  #Given a transaction from the dataset (set of cleaned tweets of a single day) and the indication for singleton
+  #results, it returns a dictionary containing the frequent topics and their frequency and number of occurrrences,
+  #obtained by applying mlx_apriori on the transaction -> {topic: (freq, num_occ), ...}
 
   # transactions = pd.eval(transactions_string)
   print("Finding frequent topics on day", num_day)
@@ -96,7 +96,7 @@ def mlx_apriori_fun(transactions, singleton, num_day):
     for el in tot_list:
       dict_topic[el[0]] = (el[1], el[1]*len(transactions))
 
-  return(dict_topic)
+  return(dict_topic)'''
 
 
 def naive_fun(transactions, singleton, num_day):
