@@ -206,8 +206,8 @@ def apply_fun(name_fun, dimension, column_dataframe, singleton): # column_datafr
       result = eff_apriori_fun(column_dataframe.values[i], singleton, i)
     elif name_fun == "eff_apriori_rules_fun":
       result = eff_apriori_rules_fun(column_dataframe.values[i], i)
-    elif name_fun == "mlx_apriori_fun":
-      result =mlx_apriori_fun(column_dataframe.values[i], singleton, i)
+    #elif name_fun == "mlx_apriori_fun":
+      #result = mlx_apriori_fun(column_dataframe.values[i], singleton, i)
     elif name_fun == "naive_fun_freq":
       result = naive_fun_freq(column_dataframe.values[i], singleton, i)
     else:
