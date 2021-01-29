@@ -3,7 +3,7 @@ import pre_analysis
 import time
 
 
-# Preprocessing and preanalysis of datasets: paths are the old ones, decomment and change paths to re-run
+# Script used to apply preprocessing and pre-analysis of datasets: paths are the old ones, uncomment and change paths to re-run
 
 
 # cleaning dataset covid19
