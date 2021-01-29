@@ -34,7 +34,7 @@ After the cleaning we obtain datasets where tweets are grouped by date.
 
 ### 1) Prerequisites
 
-1) Installation of `Pyhton 3.8.5` or more
+1) Installation of `Python 3.8.5` or more
 2) It is recommended to create a virtual environment for the project
 3) Installation of two libraries:
    1) `pandas 1.2.1`
