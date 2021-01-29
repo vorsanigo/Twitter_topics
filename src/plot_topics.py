@@ -2,7 +2,7 @@ import pandas as pd
 import pre_analysis
 
 
-# Script used to plot popular topics and their frequency: paths are the old ones, decomment and change paths to re-run
+# Script used to plot popular topics and their frequency: paths are the old ones, uncomment and change paths to re-run
 
 '''
 # covid
