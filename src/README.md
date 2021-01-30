@@ -84,4 +84,4 @@ NB: in this execution both the baseline and apriori methods can be run, the foll
   - 2 columns:
       - `date_only` containing the dates in format YY-MM-DD
       - `text_cleaned_tuple` containing the tweets as a list of tuples
-- OUTPUT: it is stored in `bin/results` as a `csv` file containing the popular topics, their frequency on the days when they are frequent, and the total number of days when they are frequent.
+- OUTPUT: it is stored in `bin/results` as a `csv` file containing the popular topics, their frequency on the days when they are frequent, and the total number of days on which they are frequent.
