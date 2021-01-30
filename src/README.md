@@ -8,9 +8,9 @@ terms that appear together in a tweet. Here, in particular, the considered case 
 ### Folders
 
 - `doc` contains the report about the project with the explanation of the solution and the experimental part 
-- `src` contains the source code of the project
+- `src` contains the scripts used for the cleaning and analysis parts
 - `data` contains the datasets
-- `bin` contains the files to execute the program and the results of the experimental evaluation
+- `bin` contains the files to execute the solution and the results of the experimental evaluation
 
 ### Datasets
 
