@@ -69,8 +69,8 @@ NB: in this execution both the baseline and apriori methods can be run, the foll
 2) Run the `.py` script: the command on the terminal in the virtual environment is `python main.py`
 3) When the program asks to select the dataset, write `covid_input` (other datasets could be used)
 4) Follow the instructions given by the program to set different parameters:
-   1) Maximum and minimum number of days in which the returned topics must be popular
-   2) Total number of results to be returned
+   1) Maximum and minimum number of days on which the returned topics must be popular
+   2) Total number of results (at most) to be returned
    3) Type of solution method to use to find popular topics
    4) If consider or not topics composed by just one term (singletons)
  
