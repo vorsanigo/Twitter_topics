@@ -46,7 +46,7 @@ NB: in this execution the apriori methods (with or without association rules) ca
 1) support threshold = 0.03
 2) confidence threshold = 0.7
 3) only topics with at least 2 terms are returned
-4) only topics frequent on at least 2 days are returned 
+4) only topics frequent on at least 2 days are returned
    
 #### Execution 
 1) Open the terminal and navigate to the `bin` directory, where there is a script named `execution.py`
